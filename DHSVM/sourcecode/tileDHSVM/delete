@@ -1,0 +1,89 @@
+/*****************************************************************************
+Function name: CalcOverstoryIntercept()
+
+Purpose      : .
+*****************************************************************************/
+void CalcOverstoryIntercept(OPTIONSTRUCT *Options, int HeatFluxOption,
+  int y, int x, int Dt, int NVegLActual, TileStruct **Tile, VEGTABLE *VType,
+  PIXRAD *LocalRad, PIXMET *LocalMet, float UpperRa, float UpperWind)
+{
+  float Tsurf;
+  float SnowLongIn;			/* Incoming longwave radiation at snow surface (W/m2) */
+  float SnowNetShort;		/* Net amount of short wave radiation at the snow surface (W/m2) */
+  float SnowRa;				/* Aerodynamic resistance for snow */
+  float SnowWind;		    /* Wind 2 m above snow */
+
+  if (((*Tile)[ForestTile].IntSnow[0] || (*Tile)[ForestTile].SnowFall > 0.0)) {
+    SnowInterception(Options, y, x, Dt, VType->Fract[0], VType->Vf,
+      VType->LAI[0], VType->MaxInt[0], VType->MaxSnowInt, VType->MDRatio,
+      VType->SnowIntEff, UpperRa, LocalMet->AirDens,
+      LocalMet->Eact, LocalMet->Lv, LocalRad, LocalMet->Press,
+      LocalMet->Tair, LocalMet->Vpd, UpperWind,
+      &((*Tile)[ForestTile].RainFall), &((*Tile)[ForestTile].SnowFall),
+      &((*Tile)[ForestTile].IntRain[0]), &((*Tile)[ForestTile].IntSnow[0]),
+      &((*Tile)[ForestTile].TempIntStorage), &((*Tile)[ForestTile].CanopyVaporMassFlux),
+      &((*Tile)[ForestTile].Tcanopy), &((*Tile)[ForestTile].MeltEnergy), VType->Height,
+      VType->UnderStory);
+    (*Tile)[ForestTile].MoistureFlux -= (*Tile)[ForestTile].CanopyVaporMassFlux;
+
+    /* Because we now have a new estimate of the canopy temperature we can
+    recalculate the longwave balance */
+    if ((*Tile)[ForestTile].HasSnow == TRUE)
+      Tsurf = (*Tile)[ForestTile].TSurf;
+    else if (HeatFluxOption == TRUE)
+      Tsurf = (*Tile)[ForestTile].TSurf;
+    else
+      Tsurf = LocalMet->Tair;
+
+    /* update longwave radiation */
+    GapSurroundingLongRadiation(&((*Tile)[ForestTile]), LocalMet->Lin, VType->Vf,
+      VType->Fract[0], (*Tile)[ForestTile].Tcanopy, Tsurf);
+  }
+  /* if no snow */
+  else if (VType->NVegLayers > 0) {
+    (*Tile)[ForestTile].Tcanopy = LocalMet->Tair;
+    (*Tile)[ForestTile].CanopyVaporMassFlux = 0.0;
+    (*Tile)[ForestTile].TempIntStorage = 0.0;
+    InterceptionStorage(NVegLActual, VType->MaxInt, VType->Fract, (*Tile)[ForestTile].IntRain,
+      &((*Tile)[ForestTile].RainFall));
+  }
+
+  /* if snow is present, simulate the snow pack dynamics */
+  if ((*Tile)[ForestTile].HasSnow || (*Tile)[ForestTile].SnowFall > 0.0) {
+
+    SnowLongIn = LocalRad->LongIn[1];
+    SnowNetShort = LocalRad->NetShort[1];
+    SnowWind = VType->USnow * LocalMet->Wind;
+    SnowRa = VType->RaSnow / LocalMet->Wind;
+
+    (*Tile)[ForestTile].SnowPackOutflow =
+      SnowMelt(y, x, Dt, 2.+Z0_SNOW, 0.f, Z0_SNOW, SnowRa, LocalMet->AirDens,
+        LocalMet->Eact, LocalMet->Lv, SnowNetShort, SnowLongIn,
+        LocalMet->Press, (*Tile)[ForestTile].RainFall, (*Tile)[ForestTile].SnowFall,
+        LocalMet->Tair, LocalMet->Vpd, SnowWind,
+        &((*Tile)[ForestTile].PackWater), &((*Tile)[ForestTile].SurfWater),
+        &((*Tile)[ForestTile].Swq), &((*Tile)[ForestTile].VaporMassFlux),
+        &((*Tile)[ForestTile].TPack), &((*Tile)[ForestTile].TSurf), &((*Tile)[ForestTile].MeltEnergy));
+
+    /* Rainfall was added to SurfWater of the snow pack and has to be set to zero */
+    (*Tile)[ForestTile].RainFall = 0.0;
+    (*Tile)[ForestTile].MoistureFlux -= (*Tile)[ForestTile].VaporMassFlux;
+
+    /* Because we now have a new estimate of the snow surface temperature we
+    can recalculate the longwave balance */
+    Tsurf = (*Tile)[ForestTile].TSurf;
+    GapSurroundingLongRadiation(&((*Tile)[ForestTile]), LocalMet->Lin, VType->Vf,
+      VType->Fract[0], (*Tile)[ForestTile].Tcanopy, Tsurf);
+  }
+  else {
+    (*Tile)[ForestTile].SnowPackOutflow = 0.0;
+    (*Tile)[ForestTile].VaporMassFlux = 0.0;
+  }
+
+  /* Determine whether a snow pack is still present, or whether everything
+  has melted */
+  if ((*Tile)[ForestTile].Swq > 0.0)
+    (*Tile)[ForestTile].HasSnow = TRUE;
+  else
+    (*Tile)[ForestTile].HasSnow = FALSE;
+}

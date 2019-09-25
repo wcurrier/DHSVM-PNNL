@@ -139,6 +139,31 @@ void MassEnergyBalance(OPTIONSTRUCT *Options, int y, int x,
       ReportError("MassEnergyBalance()", 72);
   }
 
+  if (LocalVeg->FORfrac > 0.0) {
+
+    LocalVeg->Tile[NorthFacing].NVegLActual = VType->NVegLayers - 1;
+    LocalVeg->Tile[SouthFacing].NVegLActual = VType->NVegLayers - 1;
+    LocalVeg->Tile[Exposed].NVegLActual     = VType->NVegLayers - 1;
+    LocalVeg->Tile[ForestTile].NVegLActual  = VType->NVegLayers;
+
+    if (LocalVeg->Tile[NorthFacing].HasSnow == TRUE && VType->UnderStory == TRUE)
+      --LocalVeg->Tile[NorthFacing].NVegLActual;
+    if (LocalVeg->Tile[SouthFacing].HasSnow == TRUE && VType->UnderStory == TRUE)
+      --LocalVeg->Tile[SouthFacing].NVegLActual;
+     if (LocalVeg->Tile[Exposed].HasSnow == TRUE && VType->UnderStory == TRUE)
+      --LocalVeg->Tile[Exposed].NVegLActual;
+
+    /* initialize soil moisture */
+    for (i = 0; i < TILE_PARTITION; i++) {
+      for (j = 0; j <= MaxSoilLayers; j++)
+        LocalVeg->Tile[i].Moist[j] = LocalSoil->Moist[j];
+      LocalVeg->Tile[i].MeltEnergy = 0.0;
+      LocalVeg->Tile[i].MoistureFlux = 0.0;
+      LocalVeg->Tile[i].ETot = 0.;
+    }
+  }
+
+
   /* initialize the total amount of evapotranspiration, and MeltEnergy */
   LocalEvap->ETot = 0.0;
   LocalVeg->MeltEnergy = 0.0;
@@ -170,6 +195,41 @@ void MassEnergyBalance(OPTIONSTRUCT *Options, int y, int x,
       SType->Albedo, SineSolarAltitude, LocalMet->Sin);
   }
 
+  if (Options->CanopyTiling && LocalVeg->FORfrac > 0.0) {
+
+    TileRadiation(&(LocalVeg->Tile), Options, SineSolarAltitude, LocalMet->Sin, LocalMet->SinBeam,
+     LocalMet->SinDiffuse, CanopyRadAttOption, VType, HeatFluxOption, LocalMet->Lin,
+     LocalVeg->Tcanopy, LocalMet->Tair,  LocalSoil->TSurf, SType->Albedo);
+
+    TileShortRadiation(VType, &(LocalVeg->Tile[NorthFacing]), Options,
+                        SineSolarAltitude, LocalMet->Sin, LocalMet->SinBeam, LocalMet->SinDiffuse,
+                        CanopyRadAttOption, SType->Albedo);
+    TileLongRadiation(VType, &(LocalVeg->Tile[NorthFacing]), Options,
+                    CanopyRadAttOption, LocalMet->Lin, HeatFluxOption, LocalMet->Tair,
+                    LocalVeg->Tcanopy, LocalSoil->TSurf, SType->Albedo);
+
+    TileShortRadiation(VType, &(LocalVeg->Tile[SouthFacing]), Options,
+                        SineSolarAltitude, LocalMet->Sin, LocalMet->SinBeam, LocalMet->SinDiffuse,
+                        CanopyRadAttOption, SType->Albedo);
+    TileLongRadiation(VType, &(LocalVeg->Tile[SouthFacing]), Options,
+                    CanopyRadAttOption, LocalMet->Lin, HeatFluxOption, LocalMet->Tair,
+                    LocalVeg->Tcanopy, LocalSoil->TSurf, SType->Albedo);
+
+    TileShortRadiation(VType, &(LocalVeg->Tile[Exposed]), Options,
+                        SineSolarAltitude, LocalMet->Sin, LocalMet->SinBeam, LocalMet->SinDiffuse,
+                        CanopyRadAttOption, SType->Albedo);
+    TileLongRadiation(VType, &(LocalVeg->Tile[Exposed]), Options,
+                    CanopyRadAttOption, LocalMet->Lin, HeatFluxOption, LocalMet->Tair,
+                    LocalVeg->Tcanopy, LocalSoil->TSurf, SType->Albedo);
+
+    TileShortRadiation(VType, &(LocalVeg->Tile[ForestTile]), Options,
+                        SineSolarAltitude, LocalMet->Sin, LocalMet->SinBeam, LocalMet->SinDiffuse,
+                        CanopyRadAttOption, SType->Albedo);
+    TileLongRadiation(VType, &(LocalVeg->Tile[ForestTile]), Options,
+                    CanopyRadAttOption, LocalMet->Lin, HeatFluxOption, LocalMet->Tair,
+                    LocalVeg->Tcanopy, LocalSoil->TSurf, SType->Albedo);
+  }
+
   /* calculate the actual aerodynamic resistances and wind speeds */
   UpperWind = VType->U[0] * LocalMet->Wind;
   UpperRa = VType->Ra[0] / LocalMet->Wind;
@@ -184,6 +244,11 @@ void MassEnergyBalance(OPTIONSTRUCT *Options, int y, int x,
   if (LocalVeg->Gapping > 0.0) {
     /* calculate the aerodynamic resistance */
     CalcCanopyGapAerodynamic(&(LocalVeg->Type), VType->NVegLayers, VType->Height);
+  }
+
+  if (LocalVeg->FORfrac>0.0) {
+    /* calculate the aerodynamic resistance */
+    CalcNoOverStoryAerodynamic(&(LocalVeg->Tile), VType->NVegLayers, VType->Height);
   }
 
   /* calculate the amount of interception storage, and the amount of
@@ -302,7 +367,7 @@ void MassEnergyBalance(OPTIONSTRUCT *Options, int y, int x,
     LocalSnow->Qp = 0.;
     LocalSnow->Qsw = 0.;
     LocalSnow->Qlw = 0.;
-    LocalSnow->MeltEnergy = 0.;							   
+    LocalSnow->MeltEnergy = 0.;
   }
 
   /* Determine whether a snow pack is still present, or whether everything
@@ -334,8 +399,27 @@ void MassEnergyBalance(OPTIONSTRUCT *Options, int y, int x,
       LocalVeg, LocalSnow, LocalPrecip, LocalRad, LocalMet);
 
     /* calcuate snow interception and melt for gap surroudings */
-    CalcGapSurroudingIntercept(Options, Options->HeatFlux, y, x, Dt, NVegLActual, 
+    CalcGapSurroudingIntercept(Options, Options->HeatFlux, y, x, Dt, NVegLActual,
       &(LocalVeg->Type), VType, LocalRad, LocalMet, UpperRa, UpperWind);
+  }
+
+  /************ if tiled grid cell is present *************/
+
+  if (LocalVeg->FORfrac > 0.0) {
+
+    /* calculate intercept rain/snow */
+    TileNoOverStoryInterception(Options, &(LocalVeg->Tile), HeatFluxOption, y, x,
+      Dt, NVegLActual, DX, DY, UpperRa, UpperWind, VType, LocalSoil, LocalVeg,
+      LocalSnow, LocalPrecip, LocalRad, LocalMet);
+
+    /* calcuate outflow from snowpack */
+    NoOverStorySnowMelt(Options, y, x, Dt, &(LocalVeg->Tile), DX, DY, VType,
+      SType, LocalVeg, LocalSnow, LocalPrecip, LocalRad, LocalMet, LocalSoil,
+      HeatFluxOption, CanopyRadAttOption);
+
+    OverStoryInterceptSnowMelt(Options, Options->HeatFlux, y, x, Dt, NVegLActual,
+      &(LocalVeg->Tile), VType, LocalRad, LocalMet, UpperRa, UpperWind, LocalVeg,
+      LocalSoil, CanopyRadAttOption, SType);
   }
 
 #endif
@@ -426,7 +510,6 @@ void MassEnergyBalance(OPTIONSTRUCT *Options, int y, int x,
 
   /* with canopy gaps */
   if (LocalVeg->Gapping > 0.0) {
-
     CalcGapSurroudingET(Dt, &(LocalVeg->Type), SType, VType, LocalRad, LocalMet,
       LocalSoil, LocalNetwork, UpperRa, LowerRa);
 
@@ -438,12 +521,31 @@ void MassEnergyBalance(OPTIONSTRUCT *Options, int y, int x,
       LocalSoil, LocalMet, LocalEvap, LocalNetwork, Dt, UpperRa, LowerRa);
 
   }
+
+  if (LocalVeg->FORfrac > 0.0) {
+    OverStoryET(Dt, &(LocalVeg->Tile), SType, VType, LocalRad, LocalMet,
+      LocalSoil, LocalNetwork, UpperRa, LowerRa);
+
+    /* update wind and aero resistance for gap opening */
+    LowerWind = LocalVeg->Tile[Exposed].U[1] * LocalMet->Wind;
+    LowerRa = LocalVeg->Tile[Exposed].Ra[1] / LocalMet->Wind;
+
+    NoOverStoryET(&(LocalVeg->Tile), MaxSoilLayers, VType, LocalVeg, SType,
+      LocalSoil, LocalMet, LocalEvap, LocalNetwork, Dt, UpperRa, LowerRa);
+  }
+
 #endif
-  
+
   /* aggregate the gap and non-gap variables based on area weight*/
-  if (LocalVeg->Gapping > 0.0)
+  if (LocalVeg->Gapping > 0.0) {
     AggregateCanopyGap(&(LocalVeg->Type), LocalVeg, LocalSoil, LocalSnow,
 		LocalEvap, LocalPrecip, LocalRad, weight, MaxSoilLayers, MaxVegLayers);
+  }
+
+  if (LocalVeg->FORfrac > 0.0) {
+    AggregateTile(&(LocalVeg->Tile), LocalVeg, LocalSoil, LocalSnow,
+        LocalEvap, LocalPrecip, LocalRad, MaxSoilLayers, MaxVegLayers);
+   }
 
   /* add the water that was not intercepted to the upper soil layer */
 

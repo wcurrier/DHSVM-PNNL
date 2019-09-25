@@ -73,6 +73,7 @@ set(DHSVM_SRC
   CalcKinViscosity.c
   CalcSatDensity.c
   CalcSnowAlbedo.c
+  myNewScript.c
   CalcSolar.c
   CalcTotalWater.c
   CalcTransmissivity.c
@@ -140,6 +141,8 @@ set(DHSVM_SRC
   StabilityCorrection.c
   StoreModelState.c
   SurfaceEnergyBalance.c
+  TileRadiation.c
+  TileEnergyBalance.c
   UnsaturatedFlow.c
   WaterTableDepth.c
   channel.c

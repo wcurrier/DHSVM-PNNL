@@ -48,7 +48,7 @@
  *****************************************************************************/
 void InitModelState(DATE *Start, int StepsPerDay, MAPSIZE *Map, OPTIONSTRUCT *Options, PRECIPPIX **PrecipMap,
   SNOWPIX **SnowMap, SOILPIX **SoilMap, LAYER Soil, SOILTABLE *SType,
-  VEGPIX **VegMap, LAYER Veg, VEGTABLE *VType, char *Path, 
+  VEGPIX **VegMap, LAYER Veg, VEGTABLE *VType, char *Path,
   TOPOPIX **TopoMap, ROADSTRUCT **Network, UNITHYDRINFO *HydrographInfo,
   float *Hydrograph)
 {
@@ -57,7 +57,7 @@ void InitModelState(DATE *Start, int StepsPerDay, MAPSIZE *Map, OPTIONSTRUCT *Op
   char FileName[NAMESIZE + 1];
   FILE *HydroStateFile;
   int i, j;		         /* counter */
-  int CountGap, Count;
+  int CountGap, Count, CountTile;
   int x;				 /* counter */
   int y;				 /* counter */
   int NSet;				 /* Number of dataset to be read */
@@ -433,7 +433,7 @@ void InitModelState(DATE *Start, int StepsPerDay, MAPSIZE *Map, OPTIONSTRUCT *Op
       fscanf(HydroStateFile, "%f\n", &(Hydrograph[i]));
     fclose(HydroStateFile);
   }
-  // Initialize the flood detention storage in each pixel for impervious fraction > 0 situation. 
+  // Initialize the flood detention storage in each pixel for impervious fraction > 0 situation.
   for (y = 0; y < Map->NY; y++) {
     for (x = 0; x < Map->NX; x++) {
       SoilMap[y][x].DetentionStorage = 0.0;
@@ -441,7 +441,7 @@ void InitModelState(DATE *Start, int StepsPerDay, MAPSIZE *Map, OPTIONSTRUCT *Op
       SoilMap[y][x].DetentionOut = 0.0;
     }
   }
-  
+
   /* Initialize gap/opening snowpack states if gap is present */
   TotNumGap = 0.;
   if (Options->CanopyGapping) {
@@ -478,7 +478,44 @@ void InitModelState(DATE *Start, int StepsPerDay, MAPSIZE *Map, OPTIONSTRUCT *Op
     TotNumGap = CountGap;
     printf("\n****Canopy Gap****\n%d out of %d cells have a gap structure\n\n", TotNumGap, Count);
   }
+
+  /* Initialize gap/opening snowpack states if gap is present */
+  TotNumTile = 0.;
+  if (Options->CanopyTiling) {
+	CountTile = 0;
+	Count = 0;
+	for (y = 0; y < Map->NY; y++) {
+	  for (x = 0; x < Map->NX; x++) {
+		if (INBASIN(TopoMap[y][x].Mask)) {
+		  Count += 1;
+		  if (VegMap[y][x].FORfrac > 0.0) {
+			CountTile += 1;
+			for (i = 0; i < TILE_PARTITION; i++) {
+			  VegMap[y][x].Tile[i].TPack = SnowMap[y][x].TPack;
+			  VegMap[y][x].Tile[i].SurfWater = SnowMap[y][x].SurfWater;
+			  VegMap[y][x].Tile[i].LastSnow = SnowMap[y][x].LastSnow;
+			  VegMap[y][x].Tile[i].HasSnow = SnowMap[y][x].HasSnow;
+			  for (j = 0; j < Soil.MaxLayers + 1; j++) {
+				if (j < NSoil)
+				  VegMap[y][x].Tile[i].Moist[j] = SoilMap[y][x].Moist[j];
+			  }
+			}
+			VegMap[y][x].Tile[NorthFacing].Swq = SnowMap[y][x].Swq;
+			VegMap[y][x].Tile[SouthFacing].Swq = SnowMap[y][x].Swq;
+			VegMap[y][x].Tile[Exposed].Swq = SnowMap[y][x].Swq;
+			VegMap[y][x].Tile[ForestTile].Swq = SnowMap[y][x].Swq;
+
+		  }
+		}
+	  }
+	}
+	/* total number of grid cells with a gap structure */
+    TotNumTile = CountTile;
+    printf("\n****Canopy Tile****\n%d out of %d cells have a tile structure\n\n", TotNumTile, Count);
+  }
+
 }
+
 
 
 

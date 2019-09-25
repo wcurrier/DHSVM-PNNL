@@ -81,11 +81,6 @@ void ExecDump(MAPSIZE *Map, DATE *Current, DATE *Start, OPTIONSTRUCT *Options,
       y = Dump->Pix[i].Loc.N;
       x = Dump->Pix[i].Loc.E;
 
-
-
-
-
-
       /* output variable at the pixel */
       flag = 2;
       DumpPix(Current, IsEqualTime(Current, Start), &(Dump->Pix[i].OutFile),
@@ -1178,6 +1173,8 @@ void DumpPix(DATE *Current, int first, FILES *OutFile, EVAPPIX *Evap,
     if (flag == 2)
       if (Veg->Gapping > 0.0 )
         fprintf(OutFile->FilePtr, "Gap_SW GAP_LW");
+    if (TotNumTile > 0)
+        fprintf(OutFile->FilePtr, "NF.NetShort NF.LongIn SF.NetShort SF.LongIn EXP.NetShort EXP.LongIn FOR.NetShort FOR.LongIn NF.Swq SF.Swq EXP.Swq FOR.Swq");
 
     fprintf(OutFile->FilePtr, "\n");
 
@@ -1257,13 +1254,24 @@ void DumpPix(DATE *Current, int first, FILES *OutFile, EVAPPIX *Evap,
     fprintf(OutFile->FilePtr, " %g", Soil->InfiltAcc);
 
   /* Only report the gap radiations values when dumping pixels instead of basin average */
-  if (flag == 2)
-    if (Veg->Gapping > 0.0)
+   if (TotNumGap > 0)
       fprintf(OutFile->FilePtr, " %g %g",
         Veg->Type[Opening].NetShort[1], Veg->Type[Opening].LongIn[1]);
-  
+
   /* store SWE */
   Snow->OldSwq = Snow->Swq;
+
+  /* Write Out Tile Radiation */
+  if (TotNumTile > 0)
+      fprintf(OutFile->FilePtr, " %g %g %g %g %g %g %g %g %g %g %g %g",
+        Veg->Tile[NorthFacing].NetShort[1], Veg->Tile[NorthFacing].LongIn[1], /* Overstory True, 1 = Understory */
+        Veg->Tile[SouthFacing].NetShort[1], Veg->Tile[SouthFacing].LongIn[1], /* Overstory True, 1 = Understory */
+        Veg->Tile[Exposed].NetShort[1],     Veg->Tile[Exposed].LongIn[1],     /* Overstory True, 1 = Understory */
+        Veg->Tile[ForestTile].NetShort[1],  Veg->Tile[ForestTile].LongIn[1],  /* Overstory True, 1 = Understory */
+        Veg->Tile[NorthFacing].Swq,
+        Veg->Tile[SouthFacing].Swq,
+        Veg->Tile[Exposed].Swq,
+        Veg->Tile[ForestTile].Swq);
 
 }
 

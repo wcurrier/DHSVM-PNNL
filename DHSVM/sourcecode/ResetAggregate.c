@@ -10,7 +10,7 @@
  * DESCRIP-END.
  * FUNCTIONS:    ResetAggregate.()
  * COMMENTS:
- * $Id: ResetAggregate.c,v 1.12 2004/05/03 03:28:46 colleen Exp $     
+ * $Id: ResetAggregate.c,v 1.12 2004/05/03 03:28:46 colleen Exp $
  */
 
 #include <stdio.h>
@@ -134,5 +134,26 @@ void ResetAggregate(LAYER * Soil, LAYER * Veg, AGGREGATED * Total,
 	  Total->Veg.Type[i].Swq = 0;
 	  Total->Veg.Type[i].MeltEnergy = 0;
 	}
+  }
+
+  if (Options->CanopyTiling && TotNumTile > 0) {
+	for (i = 0; i < TILE_PARTITION; i++) {
+	  Total->Veg.Tile[i].Qsw = 0;
+	  Total->Veg.Tile[i].Qlin = 0;
+	  Total->Veg.Tile[i].Qlw = 0;
+	  Total->Veg.Tile[i].Qe = 0;
+	  Total->Veg.Tile[i].Qs = 0;
+	  Total->Veg.Tile[i].Qp = 0;
+	  Total->Veg.Tile[i].Swq = 0;
+	  Total->Veg.Tile[i].MeltEnergy = 0;
+	}
+	  Total->Veg.Tile[SouthFacing].LongIn[1] = 0;
+	  Total->Veg.Tile[SouthFacing].NetShort[1] = 0;
+      Total->Veg.Tile[Exposed].LongIn[1] = 0;
+	  Total->Veg.Tile[Exposed].NetShort[1] = 0;
+      Total->Veg.Tile[NorthFacing].LongIn[1] = 0;
+	  Total->Veg.Tile[NorthFacing].NetShort[1] = 0;
+      Total->Veg.Tile[ForestTile].LongIn[1] = 0;
+	  Total->Veg.Tile[ForestTile].NetShort[1] = 0;
   }
 }

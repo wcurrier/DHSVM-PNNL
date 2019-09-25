@@ -34,7 +34,7 @@
    InitTerrainMaps()
  *****************************************************************************/
 void InitTerrainMaps(LISTPTR Input, OPTIONSTRUCT *Options, MAPSIZE *Map,
-  LAYER *Soil, LAYER *Veg, TOPOPIX ***TopoMap, SOILTABLE *SType, SOILPIX ***SoilMap, 
+  LAYER *Soil, LAYER *Veg, TOPOPIX ***TopoMap, SOILTABLE *SType, SOILPIX ***SoilMap,
   VEGTABLE *VType, VEGPIX ***VegMap)
 
 {
@@ -45,6 +45,8 @@ void InitTerrainMaps(LISTPTR Input, OPTIONSTRUCT *Options, MAPSIZE *Map,
   InitVegMap(Options, Input, Map, VegMap);
   if (Options->CanopyGapping)
     InitCanopyGapMap(Options, Input, Map, Soil, Veg, VType, VegMap, SType, SoilMap);
+  if (Options->CanopyTiling)
+    InitTileMap(Options, Input, Map, Soil, Veg, VType, VegMap, SType, SoilMap);
 }
 
 /*****************************************************************************
@@ -212,7 +214,7 @@ void InitSoilMap(LISTPTR Input, OPTIONSTRUCT * Options, MAPSIZE * Map,
   if (!(Type = (unsigned char *)calloc(Map->NX * Map->NY,
     SizeOfNumberType(NumberType))))
     ReportError((char *)Routine, 1);
-  flag = Read2DMatrix(StrEnv[soiltype_file].VarStr, Type, NumberType, 
+  flag = Read2DMatrix(StrEnv[soiltype_file].VarStr, Type, NumberType,
 	Map, 0, VarName, 0);
 
   if ((Options->FileFormat == NETCDF && flag == 0)
@@ -243,7 +245,7 @@ void InitSoilMap(LISTPTR Input, OPTIONSTRUCT * Options, MAPSIZE * Map,
   if (!(Depth = (float *)calloc(Map->NX * Map->NY,
     SizeOfNumberType(NumberType))))
     ReportError((char *)Routine, 1);
-  flag = Read2DMatrix(StrEnv[soildepth_file].VarStr, Depth, NumberType, 
+  flag = Read2DMatrix(StrEnv[soildepth_file].VarStr, Depth, NumberType,
 	Map, 0, VarName, 0);
 
   /* Assign the attributes to the correct map pixel */
@@ -360,7 +362,7 @@ void InitVegMap(OPTIONSTRUCT * Options, LISTPTR Input, MAPSIZE * Map, VEGPIX ***
 InitCanopyGapMap()
 *****************************************************************************/
 void InitCanopyGapMap(OPTIONSTRUCT *Options, LISTPTR Input, MAPSIZE *Map,
-  LAYER *Soil, LAYER *Veg, VEGTABLE *VType, VEGPIX ***VegMap, 
+  LAYER *Soil, LAYER *Veg, VEGTABLE *VType, VEGPIX ***VegMap,
   SOILTABLE *SType, SOILPIX ***SoilMap)
 {
   const char *Routine = "InitCanopyGapMap";
@@ -419,6 +421,7 @@ void InitCanopyGapMap(OPTIONSTRUCT *Options, LISTPTR Input, MAPSIZE *Map,
 
   for (y = 0; y < Map->NY; y++) {
     for (x = 0; x < Map->NX; x++) {
+          printf("Gap Size %f \n",(*VegMap)[y][x].Gapping);
       NVeg = Veg->MaxLayers;
       NSoil = Soil->MaxLayers;
       if (Options->CanopyGapping) {
@@ -454,6 +457,167 @@ void InitCanopyGapMap(OPTIONSTRUCT *Options, LISTPTR Input, MAPSIZE *Map,
 
 
 
+/*****************************************************************************
+InitTileMap()
+*****************************************************************************/
+void InitTileMap(OPTIONSTRUCT *Options, LISTPTR Input, MAPSIZE *Map,
+  LAYER *Soil, LAYER *Veg, VEGTABLE *VType, VEGPIX ***VegMap,
+  SOILTABLE *SType, SOILPIX ***SoilMap)
+{
+  const char *Routine = "InitTileMap";
+  char VarName[BUFSIZE + 1];
+  char NorthFacingFileName[BUFSIZE + 1];
+  char SouthFacingFileName[BUFSIZE + 1];
+  char ExposedFileName[BUFSIZE + 1];
+  char ForestTileFileName[BUFSIZE + 1];
+  int i, j;			/* counter */
+  int x;			/* counter */
+  int y;			/* counter */
+  int flag;
+  int NVeg;
+  int NSoil;
+  int NumberType;		/* number type */
+  float *NFfrac;		/* fraction of grid cell that is North facing forest edge */
+  float *SFfrac;		/* fraction of grid cell that is South facing forest edge */
+  float *EXPfrac;		/* fraction of grid cell that is Exposed  */
+  float *FORfrac;		/* fraction of grid cell that is Forest */
+
+  /* Get the canopy gap map filename from the [VEGETATION] section */
+  GetInitString("VEGETATION", "NORTH FACING EDGE MAP FILE", "", NorthFacingFileName,
+    (unsigned long)BUFSIZE, Input);
+  GetInitString("VEGETATION", "SOUTH FACING EDGE MAP FILE", "", SouthFacingFileName,
+    (unsigned long)BUFSIZE, Input);
+  GetInitString("VEGETATION", "EXPOSED TILE MAP FILE", "", ExposedFileName,
+    (unsigned long)BUFSIZE, Input);
+  GetInitString("VEGETATION", "FOREST TILE MAP FILE", "", ForestTileFileName,
+    (unsigned long)BUFSIZE, Input);
+
+  if (!NorthFacingFileName)
+    ReportError("NORTH FACING EDGE MAP FILE", 51);
+  if (!SouthFacingFileName)
+    ReportError("SOUTH FACING EDGE MAP FILE", 51);
+  if (!ExposedFileName)
+    ReportError("EXPOSED TILE MAP FILE", 51);
+  if (!ForestTileFileName)
+    ReportError("FOREST TILE MAP FILE", 51);
+
+  /* Read the vegetation type */
+  GetVarName(010, 0, VarName);
+  GetVarNumberType(010, &NumberType);
+
+  if (!(NFfrac = (float *)calloc(Map->NX * Map->NY,
+    SizeOfNumberType(NumberType))))
+    ReportError((char *)Routine, 1);
+  flag = Read2DMatrix(NorthFacingFileName, NFfrac, NumberType, Map, 0, VarName, 0);
+  printf("Read in North Facing Map named %s \n", VarName);
+
+  GetVarName(011, 0, VarName);
+  GetVarNumberType(011, &NumberType);
+
+  if (!(SFfrac = (float *)calloc(Map->NX * Map->NY,
+    SizeOfNumberType(NumberType))))
+    ReportError((char *)Routine, 1);
+  flag = Read2DMatrix(SouthFacingFileName, SFfrac, NumberType, Map, 0, VarName, 0);
+  printf("Read in South Facing Map named %s \n", VarName);
+
+  GetVarName(012, 0, VarName);
+  GetVarNumberType(012, &NumberType);
+
+  if (!(EXPfrac = (float *)calloc(Map->NX * Map->NY,
+    SizeOfNumberType(NumberType))))
+    ReportError((char *)Routine, 1);
+  flag = Read2DMatrix(ExposedFileName, EXPfrac, NumberType, Map, 0, VarName, 0);
+  printf("Read in Exposed Map named %s \n", VarName);
+
+  GetVarName(013, 0, VarName);
+  GetVarNumberType(013, &NumberType);
+
+  if (!(FORfrac = (float *)calloc(Map->NX * Map->NY,
+    SizeOfNumberType(NumberType))))
+    ReportError((char *)Routine, 1);
+  flag = Read2DMatrix(ForestTileFileName, FORfrac, NumberType, Map, 0, VarName, 0);
+  printf("Read in Forest Map named %s \n", VarName);
+
+  /* if NetCDF, may need to reverse the matrix */
+  if ((Options->FileFormat == NETCDF && flag == 0)
+    || (Options->FileFormat == BIN))
+  {
+    for (y = 0, i = 0; y < Map->NY; y++) {
+      for (x = 0; x < Map->NX; x++, i++) {
+        (*VegMap)[y][x].NFfrac   = NFfrac[i];
+        (*VegMap)[y][x].SFfrac   = SFfrac[i];
+        (*VegMap)[y][x].EXPfrac  = EXPfrac[i];
+        (*VegMap)[y][x].FORfrac  = FORfrac[i];
+        /* set All Tile Fractions to false for cells with no overstory */
+      }
+    }
+  }
+  else if (Options->FileFormat == NETCDF && flag == 1) {
+    for (y = Map->NY - 1, i = 0; y >= 0; y--) {
+      for (x = 0; x < Map->NX; x++, i++) {
+        (*VegMap)[y][x].NFfrac   = NFfrac[i];
+        (*VegMap)[y][x].SFfrac   = SFfrac[i];
+        (*VegMap)[y][x].EXPfrac  = EXPfrac[i];
+        (*VegMap)[y][x].FORfrac  = FORfrac[i];
+        /* set gapping to false for cells with no overstory */
+        if (VType[(*VegMap)[y][x].Veg - 1].OverStory == FALSE)
+          (*VegMap)[y][x].NFfrac  = 0.0;
+          (*VegMap)[y][x].SFfrac  = 0.0;
+          (*VegMap)[y][x].EXPfrac = 0.0;
+          (*VegMap)[y][x].FORfrac = 0.0;
+        /* set gapping to false given glacier cell */
+        if (VType[(*VegMap)[y][x].Veg - 1].Index == GLACIER)
+          (*VegMap)[y][x].NFfrac  = 0.0;
+          (*VegMap)[y][x].SFfrac  = 0.0;
+          (*VegMap)[y][x].EXPfrac = 0.0;
+          (*VegMap)[y][x].FORfrac = 0.0;
+
+      }
+    }
+  }
+  else ReportError((char *)Routine, 57);
+
+    for (y = 0, i = 0; y < Map->NY; y++) {
+      for (x = 0; x < Map->NX; x++, i++) {
+        printf("NFfrac %f , SFfrac %f , EXPfrac %f , FORfrac %f \n",(*VegMap)[y][x].NFfrac,(*VegMap)[y][x].SFfrac,(*VegMap)[y][x].EXPfrac,(*VegMap)[y][x].FORfrac);
+      }
+    }
+   for (y = 0; y < Map->NY; y++) {
+    for (x = 0; x < Map->NX; x++) {
+      NVeg = Veg->MaxLayers;
+      NSoil = Soil->MaxLayers;
+      if (Options->CanopyTiling) {
+        if (!((*VegMap)[y][x].Tile = (TileStruct *)calloc(4, sizeof(TileStruct))))
+          ReportError((char *)Routine, 1);
+        for (i = 0; i < TILE_PARTITION; i++) {
+          if (!((*VegMap)[y][x].Tile[i].IntRain = (float *)calloc(NVeg, sizeof(float))))
+            ReportError((char *)Routine, 1);
+          if (!((*VegMap)[y][x].Tile[i].IntSnow = (float *)calloc(NVeg, sizeof(float))))
+            ReportError((char *)Routine, 1);
+          if (!((*VegMap)[y][x].Tile[i].Moist = (float *)calloc(NSoil+1, sizeof(float))))
+            ReportError((char *)Routine, 1);
+          if (!((*VegMap)[y][x].Tile[i].EPot = (float *)calloc(NVeg+1, sizeof(float))))
+            ReportError((char *)Routine, 1);
+          if (!((*VegMap)[y][x].Tile[i].EAct = (float *)calloc(NVeg+1, sizeof(float))))
+            ReportError((char *)Routine, 1);
+          if (!((*VegMap)[y][x].Tile[i].EInt = (float *)calloc(NVeg, sizeof(float))))
+            ReportError((char *)Routine, 1);
+          if (!((*VegMap)[y][x].Tile[i].ESoil = (float **)calloc(NVeg, sizeof(float *))))
+            ReportError((char *)Routine, 1);
+
+          for (j = 0; j < NVeg; j++) {
+            if (!((*VegMap)[y][x].Tile[i].ESoil[j] = (float *)calloc(NSoil, sizeof(float))))
+              ReportError((char *)Routine, 1);
+          }
+        }
+      }
+    }
+  }
+  free(NFfrac);
+  free(SFfrac);
+  free(EXPfrac);
+  free(FORfrac);
+}
 
 
 

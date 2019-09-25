@@ -1,16 +1,16 @@
 /*
- * SUMMARY:      functions.h - header file for number of DHSVM functions 
+ * SUMMARY:      functions.h - header file for number of DHSVM functions
  * USAGE:        Part of DHSVM
  *
  * AUTHOR:       Bart Nijssen
  * ORG:          University of Washington, Department of Civil Engineering
  * E-MAIL:       nijssen@u.washington.edu
  * ORIG-DATE:    Apr-1996
- * DESCRIPTION:  header file for large number of DHSVM functions 
+ * DESCRIPTION:  header file for large number of DHSVM functions
  * DESCRIP-END.
- * FUNCTIONS:    
+ * FUNCTIONS:
  * COMMENTS:
- * $Id: functions.h, v 4.0  2013/1/10   Ning Exp $     
+ * $Id: functions.h, v 4.0  2013/1/10   Ning Exp $
  */
 
 #ifndef FUNCTIONS_H
@@ -55,7 +55,7 @@ void CalcWeights(METLOCATION *Station, int NStats, int NX, int NY,
 double ChannelCulvertSedFlow(int y, int x, CHANNEL * ChannelData, int i);
 
 void CheckOut(OPTIONSTRUCT *Options, LAYER Veg, LAYER Soil,
-	      VEGTABLE *VType, SOILTABLE *SType, MAPSIZE *Map, 
+	      VEGTABLE *VType, SOILTABLE *SType, MAPSIZE *Map,
 	      TOPOPIX **TopoMap, VEGPIX **VegMap, SOILPIX **SoilMap);
 
 unsigned char dequal(double a, double b);
@@ -63,15 +63,15 @@ unsigned char dequal(double a, double b);
 void deg2utm(float la, float lo, float *x, float *y);
 
 void draw(DATE *Day, int first, int DayStep, MAPSIZE *Map, int NGraphics,
-	  int *which_graphics, VEGTABLE *VType, SOILTABLE *SType, SNOWPIX **SnowMap, 
-	  SOILPIX **SoilMap, VEGPIX **VegMap, TOPOPIX **TopoMap, PRECIPPIX **PrecipMap, 
-	  float **PrismMap, float **SkyViewMap, unsigned char ***ShadowMap, 
+	  int *which_graphics, VEGTABLE *VType, SOILTABLE *SType, SNOWPIX **SnowMap,
+	  SOILPIX **SoilMap, VEGPIX **VegMap, TOPOPIX **TopoMap, PRECIPPIX **PrecipMap,
+	  float **PrismMap, float **SkyViewMap, unsigned char ***ShadowMap,
 	  EVAPPIX **EvapMap, PIXRAD **RadMap, MET_MAP_PIX **MetMap,
 	  ROADSTRUCT **Network, OPTIONSTRUCT *Options);
 
 void DumpMap(MAPSIZE *Map, DATE *Current, MAPDUMP *DMap, TOPOPIX **TopoMap,
 	     EVAPPIX **EvapMap, PRECIPPIX **PrecipMap, PIXRAD **RadMap,
-	     SNOWPIX **Snowap, SOILPIX **SoilMap, LAYER *Soil, VEGPIX **VegMap, 
+	     SNOWPIX **Snowap, SOILPIX **SoilMap, LAYER *Soil, VEGPIX **VegMap,
          LAYER *Veg, ROADSTRUCT **Network, OPTIONSTRUCT *Options);
 
 void DumpPix(DATE *Current, int first, FILES *OutFile, EVAPPIX *Evap,
@@ -84,16 +84,16 @@ void DumpTopo(MAPSIZE *Map, TOPOPIX **TopoMap);
 
 void ExecDump(MAPSIZE *Map, DATE *Current, DATE *Start, OPTIONSTRUCT *Options,
 	      DUMPSTRUCT *Dump, TOPOPIX **TopoMap, EVAPPIX **EvapMap, PIXRAD **RadiMap,
-	      PRECIPPIX ** PrecipMap, SNOWPIX **SnowMap, MET_MAP_PIX **MetMap, 
-          VEGPIX **VegMap, LAYER *Veg, SOILPIX **SoilMap, ROADSTRUCT **Network, 
-          CHANNEL *ChannelData, LAYER *Soil, AGGREGATED *Total, 
+	      PRECIPPIX ** PrecipMap, SNOWPIX **SnowMap, MET_MAP_PIX **MetMap,
+          VEGPIX **VegMap, LAYER *Veg, SOILPIX **SoilMap, ROADSTRUCT **Network,
+          CHANNEL *ChannelData, LAYER *Soil, AGGREGATED *Total,
 	      UNITHYDRINFO *HydrographInfo, float *Hydrograph);
 
 unsigned char fequal(float a, float b);
 
 void FinalMassBalance(FILES *Out, AGGREGATED *Total, WATERBALANCE *Mass);
 
-float FindDTRoad(ROADSTRUCT **Network, TIMESTRUCT *Time, int y, int x, 
+float FindDTRoad(ROADSTRUCT **Network, TIMESTRUCT *Time, int y, int x,
 		 float dx, float beta, float alpha);
 
 void GenerateScales(MAPSIZE *Map, int NumberType, void **XScale,
@@ -108,12 +108,12 @@ uchar InArea(MAPSIZE *Map, COORD *Loc);
 void InitAggregated(OPTIONSTRUCT *Options, int MaxVegLayers, int MaxSoilLayers,
   AGGREGATED *Total);
 
-void InitChannelRVeg(TIMESTRUCT *Time, Channel *Channel); 
+void InitChannelRVeg(TIMESTRUCT *Time, Channel *Channel);
 
 void InitCharArray(char *Array, int Size);
 
 void InitConstants(LISTPTR Input, OPTIONSTRUCT *Options, MAPSIZE *Map,
-	SOLARGEOMETRY *SolarGeo, TIMESTRUCT *Time);  
+	SOLARGEOMETRY *SolarGeo, TIMESTRUCT *Time);
 
 void InitDump(LISTPTR Input, OPTIONSTRUCT *Options, MAPSIZE *Map,
 	      int MaxSoilLayers, int MaxVegLayers, int Dt,
@@ -140,7 +140,7 @@ void InitMappedConstants(LISTPTR Input, OPTIONSTRUCT *Options, MAPSIZE *Map,
 
 void InitMassWaste(LISTPTR Input, TIMESTRUCT *Time);
 
-void InitGridMet(OPTIONSTRUCT *Options, LISTPTR Input, MAPSIZE *Map, TOPOPIX **TopoMap,  
+void InitGridMet(OPTIONSTRUCT *Options, LISTPTR Input, MAPSIZE *Map, TOPOPIX **TopoMap,
          GRID *Grid, METLOCATION **Stat, int *NStats);
 
 void InitMetMaps(LISTPTR Input, int NDaySteps, MAPSIZE *Map, MAPSIZE *Radar,
@@ -148,13 +148,13 @@ void InitMetMaps(LISTPTR Input, int NDaySteps, MAPSIZE *Map, MAPSIZE *Radar,
 		 float ***PrecipLapseMap, float ***PrismMap,
 		 unsigned char ****ShadowMap, float ***SkyViewMap,
 		 EVAPPIX ***EvapMap, PRECIPPIX ***PrecipMap, float ***PptMultiplierMap,
-		 RADARPIX ***RadarMap, PIXRAD ***RadMap, SOILPIX **SoilMap, 
-                 LAYER *Soil, VEGPIX **VegMap, LAYER *Veg, TOPOPIX **TopoMap, 
+		 RADARPIX ***RadarMap, PIXRAD ***RadMap, SOILPIX **SoilMap,
+                 LAYER *Soil, VEGPIX **VegMap, LAYER *Veg, TOPOPIX **TopoMap,
                  float ****MM5Input, float ****WindModel);
 
 void InitMetSources(LISTPTR Input, OPTIONSTRUCT *Options, MAPSIZE *Map,
-            TOPOPIX **TopoMap, int NSoilLayers, TIMESTRUCT *Time, 
-            INPUTFILES *InFiles, int *NStats, METLOCATION **Stat, MAPSIZE *Radar, 
+            TOPOPIX **TopoMap, int NSoilLayers, TIMESTRUCT *Time,
+            INPUTFILES *InFiles, int *NStats, METLOCATION **Stat, MAPSIZE *Radar,
             MAPSIZE *MM5Map, GRID *Grid);
 
 void InitMM5(LISTPTR Input, int NSoilLayers, TIMESTRUCT *Time,
@@ -172,32 +172,32 @@ void InitModelState(DATE *Start, int StepsPerDay, MAPSIZE *Map, OPTIONSTRUCT *Op
 		    ROADSTRUCT **Network, UNITHYDRINFO *HydrographInfo,
 		    float *Hydrograph);
 
-void InitNetwork(int NY, int NX, float DX, float DY, TOPOPIX **TopoMap, 
-		 SOILPIX **SoilMap, VEGPIX **VegMap, VEGTABLE *VType, 
-		 ROADSTRUCT ***Network, CHANNEL *ChannelData, 
+void InitNetwork(int NY, int NX, float DX, float DY, TOPOPIX **TopoMap,
+		 SOILPIX **SoilMap, VEGPIX **VegMap, VEGTABLE *VType,
+		 ROADSTRUCT ***Network, CHANNEL *ChannelData,
 		 LAYER Veg, OPTIONSTRUCT *Options);
 
 void InitNewDay(int DayOfYear, SOLARGEOMETRY *SolarGeo);
 
 void InitNewMonth(TIMESTRUCT *Time, OPTIONSTRUCT *Options, MAPSIZE *Map,
-		  TOPOPIX **TopoMap, float **PrismMap, unsigned char ***ShadowMap, 
+		  TOPOPIX **TopoMap, float **PrismMap, unsigned char ***ShadowMap,
 		  INPUTFILES *InFiles, int NVegs, VEGTABLE *VType, int NStats,
 		  METLOCATION *Stat, char *Path);
 
 void InitNewStep(INPUTFILES *InFiles, MAPSIZE *Map, TIMESTRUCT *Time,
 		 int NSoilLayers, OPTIONSTRUCT *Options, int NStats,
 		 METLOCATION *Stat, char *RadarFileName, MAPSIZE *Radar,
-		 RADARPIX **RadarMap, SOLARGEOMETRY *SolarGeo, 
-		 TOPOPIX **TopoMap, SOILPIX **SoilMap, float ***MM5Input, 
+		 RADARPIX **RadarMap, SOLARGEOMETRY *SolarGeo,
+		 TOPOPIX **TopoMap, SOILPIX **SoilMap, float ***MM5Input,
                  float **PrecipLapseMap, float ***WindModel, MAPSIZE *MM5Map);
-                 
+
 void InitParameterMaps(OPTIONSTRUCT *Options, MAPSIZE *Map, int Id,
   char *FileName, SNOWPIX ***SnowMap, int ParamType, float temp);
 
 int InitPixDump(LISTPTR Input, MAPSIZE *Map, uchar **BasinMask, char *Path,
 		int NPix, PIXDUMP **Pix, OPTIONSTRUCT *Options);
-    
-void InitPptMultiplierMap(OPTIONSTRUCT *Options, MAPSIZE *Map, float ***PptMultiplierMap);                            
+
+void InitPptMultiplierMap(OPTIONSTRUCT *Options, MAPSIZE *Map, float ***PptMultiplierMap);
 
 void InitPrecipLapse(LISTPTR Input, INPUTFILES *InFiles);
 
@@ -226,7 +226,7 @@ void InitSnowMap(MAPSIZE *Map, SNOWPIX ***SnowMap, TIMESTRUCT *Time);
 void InitSoilMap(LISTPTR Input, OPTIONSTRUCT *Options, MAPSIZE *Map,
 		 LAYER *Soil, TOPOPIX **TopoMap, SOILPIX ***SoilMap);
 
-int InitSoilTable(OPTIONSTRUCT *Options, SOILTABLE **SType, 
+int InitSoilTable(OPTIONSTRUCT *Options, SOILTABLE **SType,
 			LISTPTR Input, LAYER *Soil, int InfiltOption);
 
 void InitStateDump(LISTPTR Input, int NStates, DATE **DState);
@@ -239,7 +239,7 @@ void InitStations(LISTPTR Input, MAPSIZE *Map, int NDaySteps,
 void InitTables(int StepsPerDay, LISTPTR Input, OPTIONSTRUCT *Options,
     MAPSIZE *Map, SOILTABLE **SType, LAYER *Soil, VEGTABLE **VType,
     LAYER *Veg);
-    
+
 void InitTerrainMaps(LISTPTR Input, OPTIONSTRUCT *Options, MAPSIZE *Map,
   LAYER *Soil, LAYER *Veg, TOPOPIX ***TopoMap, SOILTABLE *SType,
   SOILPIX ***SoilMap, VEGTABLE *VType, VEGPIX ***VegMap);
@@ -271,13 +271,13 @@ void InitXGraphics(int argc, char **argv,
 float LapsePrecip(float Precip, float FromElev, float ToElev, float PrecipLapse, float precipMultiplier);
 
 float LapseT(float Temp, float FromElev, float ToElev, float LapseRate);
- 
+
 PIXMET MakeLocalMetData(int y, int x, MAPSIZE *Map, int DayStep, int NDaySteps,
-			OPTIONSTRUCT *Options, int NStats, METLOCATION *Stat, 
+			OPTIONSTRUCT *Options, int NStats, METLOCATION *Stat,
       uchar *MetWeights, float LocalElev, PIXRAD *RadMap,
 			PRECIPPIX *PrecipMap, MAPSIZE *Radar, RADARPIX **RadarMap,
-			float **PrismMap, SNOWPIX *LocalSnow, 
-      CanopyGapStruct **Gap, VEGPIX *VegMap,
+			float **PrismMap, SNOWPIX *LocalSnow,
+      CanopyGapStruct **Gap, TileStruct **Tile, VEGPIX *VegMap,
 			float ***MM5Input, float ***WindModel, float **PrecipLapseMap,
 			MET_MAP_PIX ***MetMap, float precipMultiplier, int NGraphics, int Month, float skyview,
 			unsigned char shadow, float SunMax, float SineSolarAltitude);
@@ -322,8 +322,8 @@ int Round(double x);
 void RouteSubSurface(int Dt, MAPSIZE *Map, TOPOPIX **TopoMap,
 		     VEGTABLE *VType, VEGPIX **VegMap,
 		     ROADSTRUCT **Network, SOILTABLE *SType,
-		     SOILPIX **SoilMap, CHANNEL *ChannelData, 
-		     TIMESTRUCT *Time, OPTIONSTRUCT *Options, 
+		     SOILPIX **SoilMap, CHANNEL *ChannelData,
+		     TIMESTRUCT *Time, OPTIONSTRUCT *Options,
 		     char *DumpPath, int MaxStreamID, SNOWPIX **SnowMap);
 
 void RouteSurface(MAPSIZE * Map, TIMESTRUCT * Time, TOPOPIX ** TopoMap,
@@ -348,9 +348,9 @@ void SkipLines(FILES *InFile, int NLines);
 void StoreChannelState(char *Path, DATE *Current, Channel *Head);
 
 void StoreModelState(char *Path, DATE *Current, MAPSIZE *Map,
-		     OPTIONSTRUCT *Options, TOPOPIX **TopoMap, PRECIPPIX **PrecipMap, 
-             SNOWPIX **SnowMap, MET_MAP_PIX **MetMap, VEGPIX **VegMap, 
-             LAYER *Veg, SOILPIX **SoilMap, LAYER *Soil, ROADSTRUCT **Network, 
+		     OPTIONSTRUCT *Options, TOPOPIX **TopoMap, PRECIPPIX **PrecipMap,
+             SNOWPIX **SnowMap, MET_MAP_PIX **MetMap, VEGPIX **VegMap,
+             LAYER *Veg, SOILPIX **SoilMap, LAYER *Soil, ROADSTRUCT **Network,
 		     UNITHYDRINFO *HydrographInfo, float *Hydrograph, CHANNEL *ChannelData);
 
 float viscosity(float Tair, float Rh);
@@ -427,5 +427,57 @@ void CalcGapSurroudingIntercept(OPTIONSTRUCT *Options, int HeatFluxOption,
   PIXRAD *LocalRad, PIXMET *LocalMet, float UpperRa, float UpperWind);
 
 float CalcGapView(float R, float H, float Vf);
+
+void InitTileMap(OPTIONSTRUCT *Options, LISTPTR Input, MAPSIZE *Map,
+  LAYER *Soil, LAYER *Veg, VEGTABLE *VType, VEGPIX ***VegMap,
+  SOILTABLE *SType, SOILPIX ***SoilMap);
+
+void TileRadiation(TileStruct **Tile, OPTIONSTRUCT *Options, float SineSolarAltitude, float Rs,
+  float Rsb, float Rsd, int CanopyRadAttOption, VEGTABLE *VType, int HeatFluxOption,
+  float Ld, float Tcanopy, float Tair, float Tsoil, float SoilAlbedo);
+
+void TileShortRadiation(VEGTABLE *VType, TileStruct *Tile, OPTIONSTRUCT *Options,
+                        float SineSolarAltitude, float Rs, float Rsb, float Rsd,
+                        int CanopyRadAttOption, float SoilAlbedo);
+
+void TileLongRadiation(VEGTABLE *VType,TileStruct *Tile, OPTIONSTRUCT *Options,
+                        int CanopyRadAttOption,float Ld, int HeatFluxOption,
+                        float Tair, float Tcanopy, float Tsoil, float SoilAlbedo);
+
+void CalcNoOverStoryAerodynamic(TileStruct **Tile, int NVegLayers,
+  float *Height);
+
+void TileNoOverStoryInterception(OPTIONSTRUCT *Options, TileStruct **Tile,
+  int HeatFluxOption, int y, int x, int Dt, int NVegLActual,
+  float DX, float DY, float UpperRa, float UpperWind, VEGTABLE *VType,
+  SOILPIX *LocalSoil, VEGPIX *LocalVeg, SNOWPIX *LocalSnow,
+  PRECIPPIX *LocalPrecip, PIXRAD *LocalRad, PIXMET *LocalMet);
+
+void CalcOverStoryIntercept(OPTIONSTRUCT *Options, int HeatFluxOption,
+  int y, int x, int Dt, int NVegLActual, TileStruct **Tile, VEGTABLE *VType,
+  PIXRAD *LocalRad, PIXMET *LocalMet, float UpperRa, float UpperWind);
+
+void NoOverStorySnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
+  TileStruct **Tile, float DX, float DY, VEGTABLE *VType, SOILTABLE *SType,
+  VEGPIX *LocalVeg, SNOWPIX *LocalSnow, PRECIPPIX *LocalPrecip,
+  PIXRAD *LocalRad, PIXMET *LocalMet, SOILPIX *LocalSoil, int HeatFluxOption, int CanopyRadAttOption);
+
+void OverStoryInterceptSnowMelt(OPTIONSTRUCT *Options, int HeatFluxOption,
+  int y, int x, int Dt, int NVegLActual, TileStruct **Tile, VEGTABLE *VType,
+  PIXRAD *LocalRad, PIXMET *LocalMet, float UpperRa, float UpperWind, VEGPIX *LocalVeg,
+  SOILPIX *LocalSoil, int CanopyRadAttOption, SOILTABLE *SType);
+
+void NoOverStoryET(TileStruct **Tile, int NSoil, VEGTABLE *VType,
+  VEGPIX *LocalVeg, SOILTABLE *SType, SOILPIX *LocalSoil, PIXMET *LocalMet,
+  EVAPPIX *LocalEvap, ROADSTRUCT *LocalNetwork, int Dt, float UpperRa,
+  float LowerRa);
+
+void OverStoryET(int Dt, TileStruct **Tile,
+  SOILTABLE *SType, VEGTABLE *VType, PIXRAD *LocalRad, PIXMET *LocalMet,
+  SOILPIX *LocalSoil, ROADSTRUCT *LocalNetwork, float UpperRa, float LowerRa);
+
+void AggregateTile(TileStruct **Tile, VEGPIX *LocalVeg,
+  SOILPIX *LocalSoil, SNOWPIX *LocalSnow, EVAPPIX *LocalEvap,
+  PRECIPPIX *LocalPrecip, PIXRAD *LocalRad, int NSoil, int NVeg);
 
 #endif

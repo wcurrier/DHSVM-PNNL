@@ -38,7 +38,7 @@
    (diffuse and direct beam), and potentially a new LAI value.
  *****************************************************************************/
 void InitNewMonth(TIMESTRUCT *Time, OPTIONSTRUCT *Options, MAPSIZE *Map,
-  TOPOPIX **TopoMap, float **PrismMap, unsigned char ***ShadowMap, 
+  TOPOPIX **TopoMap, float **PrismMap, unsigned char ***ShadowMap,
   INPUTFILES *InFiles, int NVegs, VEGTABLE *VType, int NStats,
   METLOCATION *Stat, char *Path)
 {
@@ -101,7 +101,7 @@ void InitNewMonth(TIMESTRUCT *Time, OPTIONSTRUCT *Options, MAPSIZE *Map,
 		jj = round(i / (Time->NDaySteps / 24));
 		Read2DMatrix(FileName, Array1, NumberType, Map, jj, VarName, jj);
 	  }
-	  else   
+	  else
       Read2DMatrix(FileName, Array1, NumberType, Map, i, VarName, i);
       for (y = 0; y < Map->NY; y++) {
         for (x = 0; x < Map->NX; x++) {
@@ -234,7 +234,7 @@ void InitNewStep(INPUTFILES *InFiles, MAPSIZE *Map, TIMESTRUCT *Time,
                  METLOCATION *Stat, char *RadarFileName, MAPSIZE *Radar,
                  RADARPIX **RadarMap, SOLARGEOMETRY *SolarGeo,
                  TOPOPIX **TopoMap, SOILPIX **SoilMap,
-                 float ***MM5Input, float **PrecipLapseMap, 
+                 float ***MM5Input, float **PrecipLapseMap,
                  float ***WindModel, MAPSIZE *MM5Map)
 {
   const char *Routine = "InitNewStep";
@@ -290,7 +290,7 @@ void InitNewStep(INPUTFILES *InFiles, MAPSIZE *Map, TIMESTRUCT *Time,
         }
       }
     }
-    
+
     UpdateMM5Field(InFiles->MM5Terrain, Step, Map, MM5Map, Array,
                    MM5Input[MM5_terrain - 1]);
     UpdateMM5Field(InFiles->MM5Lapse, Step, Map, MM5Map, Array,

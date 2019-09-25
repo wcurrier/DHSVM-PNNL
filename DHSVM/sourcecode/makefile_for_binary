@@ -6,7 +6,7 @@
 
 OBJS = AdjustStorage.o Aggregate.o AggregateRadiation.o	CalcAerodynamic.o \
 CalcAvailableWater.o CalcDistance.o CalcEffectiveKh.o CalcKhDry.o   \
-CalcKinViscosity.o CalcSatDensity.o CalcSnowAlbedo.o CalcSolar.o    \
+CalcKinViscosity.o CalcSatDensity.o CalcSnowAlbedo.o myNewScript.o CalcSolar.o    \
 CalcTotalWater.o CalcTransmissivity.o CalcWeights.o Calendar.o	     \
 CanopyResistance.o ChannelState.o CheckOut.o CutBankGeometry.o	     \
 DHSVMChannel.o Desorption.o Draw.o EvalExponentIntegral.o \
@@ -24,10 +24,10 @@ RootBrent.o Round.o RouteSubSurface.o RouteSurface.o   \
 SatVaporPressure.o SensibleHeatFlux.o SeparateRadiation.o SizeOfNT.o \
 SlopeAspect.o SnowInterception.o SnowMelt.o SnowPackEnergyBalance.o \
 SoilEvaporation.o StabilityCorrection.o StoreModelState.o	     \
-SurfaceEnergyBalance.o UnsaturatedFlow.o VarID.o WaterTableDepth.o  \
+SurfaceEnergyBalance.o TileRadiation.o TileEnergyBalance.o UnsaturatedFlow.o VarID.o WaterTableDepth.o  \
 channel.o channel_grid.o equal.o errorhandler.o globals.o tableio.o \
 channel_complt.o RiparianShading.o CanopyGapEnergyBalance.o deg2utm.o \
-CanopyGapRadiation.o Avalanche.o DistributeSatflow.o InitParameterMaps.o
+CanopyGapRadiation.o Avalanche.o DistributeSatflow.o InitParameterMaps.o \
 
 SRCS = $(OBJS:%.o=%.c)
 
@@ -103,6 +103,8 @@ CalcSatDensity.o: CalcSatDensity.c settings.h functions.h constants.h
 CalcSnowAlbedo.o: CalcSnowAlbedo.c settings.h constants.h data.h \
  Calendar.h functions.h DHSVMChannel.h getinit.h channel.h \
  channel_grid.h
+myNewScript.o: myNewScript.c settings.h constants.h data.h \
+ Calendar.h functions.h
 CalcSolar.o: CalcSolar.c constants.h settings.h Calendar.h functions.h \
  data.h DHSVMChannel.h getinit.h channel.h channel_grid.h rad.h
 CalcTotalWater.o: CalcTotalWater.c settings.h soilmoisture.h
@@ -280,6 +282,10 @@ StoreModelState.o: StoreModelState.c settings.h data.h Calendar.h \
  channel_grid.h constants.h sizeofnt.h varid.h
 SurfaceEnergyBalance.o: SurfaceEnergyBalance.c settings.h massenergy.h \
  data.h Calendar.h constants.h
+TileRadiation.o: TileRadiation.c settings.h massenergy.h data.h \
+ constants.h DHSVMerror.h functions.h
+TileEnergyBalance.o: TileEnergyBalance.c settings.h massenergy.h data.h \
+ constants.h DHSVMerror.h functions.h snow.h
 UnsaturatedFlow.o: UnsaturatedFlow.c constants.h settings.h \
  functions.h data.h Calendar.h DHSVMChannel.h getinit.h channel.h \
  channel_grid.h soilmoisture.h 

@@ -5,12 +5,12 @@
  * AUTHOR:       Bart Nijssen
  * ORG:          University of Washington, Department of Civil Engineering
  * E-MAIL:       nijssen@u.washington.edu
- * ORIG-DATE:    Apr-96 
+ * ORIG-DATE:    Apr-96
  * DESCRIPTION:  Initialize constants for DHSVM
  * DESCRIP-END.
  * FUNCTIONS:    InitConstants()
  * COMMENTS:
- * $Id: InitConstants.c,v 1.16 2004/08/18 01:01:28 colleen Exp $     
+ * $Id: InitConstants.c,v 1.16 2004/08/18 01:01:28 colleen Exp $
  */
 
 #include <ctype.h>
@@ -92,10 +92,11 @@ void InitConstants(LISTPTR Input, OPTIONSTRUCT *Options, MAPSIZE *Map,
     {"OPTIONS", "SHADING DATA PATH", "", ""},
     {"OPTIONS", "SHADING DATA EXTENSION", "", ""},
     {"OPTIONS", "SKYVIEW DATA PATH", "", ""},
-	  {"OPTIONS", "STREAM TEMPERATURE", "", ""}, 
-	  {"OPTIONS", "RIPARIAN SHADING", "", ""}, 
+	  {"OPTIONS", "STREAM TEMPERATURE", "", ""},
+	  {"OPTIONS", "RIPARIAN SHADING", "", ""},
     {"OPTIONS", "VARIABLE LIGHT TRANSMITTANCE", "", "" },
     {"OPTIONS", "CANOPY GAPPING", "", "" },
+    {"OPTIONS", "TILE GRID CELLS", "", "" },
     {"OPTIONS", "SNOW SLIDING", "", "" },
     {"OPTIONS", "PRECIPITATION SEPARATION", "", "FALSE" },
     {"AREA", "COORDINATE SYSTEM", "", ""},
@@ -209,7 +210,7 @@ void InitConstants(LISTPTR Input, OPTIONSTRUCT *Options, MAPSIZE *Map,
     Options->HeatFlux = FALSE;
   else
     ReportError(StrEnv[sensible_heat_flux].KeyName, 51);
- 
+
   /* Determine if the maximum infiltration rate is static or dynamic */
   if (strncmp(StrEnv[infiltration].VarStr, "STATIC", 6) == 0) {
     Options->Infiltration = STATIC;
@@ -221,7 +222,7 @@ void InitConstants(LISTPTR Input, OPTIONSTRUCT *Options, MAPSIZE *Map,
   }
   else
     ReportError(StrEnv[infiltration].KeyName, 51);
-    
+
   /* Determine whether the mm5 interface should be used */
   if (strncmp(StrEnv[mm5].VarStr, "TRUE", 4) == 0)
     Options->MM5 = TRUE;
@@ -318,6 +319,14 @@ void InitConstants(LISTPTR Input, OPTIONSTRUCT *Options, MAPSIZE *Map,
   else
     ReportError(StrEnv[gapping].KeyName, 51);
 
+  /* Determine if canopy gapping will be modeled */
+  if (strncmp(StrEnv[tiling].VarStr, "TRUE", 4) == 0)
+    Options->CanopyTiling = TRUE;
+  else if (strncmp(StrEnv[tiling].VarStr, "FALSE", 5) == 0)
+    Options->CanopyTiling = FALSE;
+  else
+    ReportError(StrEnv[tiling].KeyName, 51);
+
   /* Determine if snow sliding will be modeled */
   if (strncmp(StrEnv[snowslide].VarStr, "TRUE", 4) == 0)
     Options->SnowSlide = TRUE;
@@ -325,7 +334,7 @@ void InitConstants(LISTPTR Input, OPTIONSTRUCT *Options, MAPSIZE *Map,
     Options->SnowSlide = FALSE;
   else
     ReportError(StrEnv[snowslide].KeyName, 51);
-  
+
   /* Determine if use separate input of rain and snow */
   if (strncmp(StrEnv[sepr].VarStr, "TRUE", 4) == 0)
     Options->PrecipSepr = TRUE;
@@ -571,7 +580,7 @@ InitMappedConstants(LISTPTR Input, OPTIONSTRUCT *Options, MAPSIZE *Map,
     {
      {"CONSTANTS", "RAIN THRESHOLD", "", ""},
      {"CONSTANTS", "SNOW THRESHOLD", "", ""},
-     {"CONSTANTS", "FRESH SNOW ALBEDO", "", "0.85" },                                         
+     {"CONSTANTS", "FRESH SNOW ALBEDO", "", "0.85" },
      {"CONSTANTS", "ALBEDO ACCUMULATION LAMBDA", "", "" },
      {"CONSTANTS", "ALBEDO MELTING LAMBDA", "", "" },
      {"CONSTANTS", "ALBEDO ACCUMULATION MIN", "", "" },
@@ -583,7 +592,7 @@ InitMappedConstants(LISTPTR Input, OPTIONSTRUCT *Options, MAPSIZE *Map,
   int MapId;
   int ParamType;
   char FileName[BUFSIZE + 1];	      /* Variable name */
-  
+
   /* Read the key-entry pairs from the input file */
   for (i = 0; StrEnv[i].SectionName; i++)
     GetInitString(StrEnv[i].SectionName, StrEnv[i].KeyName, StrEnv[i].Default,
@@ -615,9 +624,9 @@ InitMappedConstants(LISTPTR Input, OPTIONSTRUCT *Options, MAPSIZE *Map,
     if (!CopyFloat(&MAX_SNOW_TEMP, StrEnv[snow_threshold].VarStr, 1)) {
       printf("%s: spatial parameters are used\n", StrEnv[snow_threshold].KeyName);
 	  ParamType = MAP;
-      strcpy(FileName, StrEnv[snow_threshold].VarStr);      
+      strcpy(FileName, StrEnv[snow_threshold].VarStr);
     }
-	else 
+	else
 	  ParamType = CONSTANT;
 	InitParameterMaps(Options, Map, MapId, FileName, SnowMap, ParamType, MAX_SNOW_TEMP);
   }

@@ -52,6 +52,7 @@ CanopyGapInterception()
 void CanopyGapInterceptionStorage(int NAct, float *MaxInt,
   float *Fract, float *Int, float *Precip)
 {
+
   float Available;		/* Available storage */
   float Intercepted;	/* Amount of water intercepted during this timestep */
   int i;			    /* counter */

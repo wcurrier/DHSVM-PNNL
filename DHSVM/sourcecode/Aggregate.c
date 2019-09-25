@@ -26,13 +26,13 @@
 
 /*****************************************************************************
   Aggregate()
-  
+
   Calculate the average values for the different fluxes and state variables
-  over the basin.  
+  over the basin.
   In the current implementation the local radiation
   elements are not stored for the entire area.  Therefore these components
   are aggregated in AggregateRadiation() inside MassEnergyBalance().
-  
+
   The aggregated values are set to zero in the function RestAggregate,
   which is executed at the beginning of each time step.
 *****************************************************************************/
@@ -60,7 +60,7 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 		  NPixels++;
 		  NSoilL = Soil->NLayers[SoilMap[y][x].Soil - 1];
 		  NVegL = Veg->NLayers[VegMap[y][x].Veg - 1];
-		  
+
 		  /* aggregate the evaporation data */
 		  Total->Evap.ETot += Evap[y][x].ETot;
 		  for (i = 0; i < NVegL; i++) {
@@ -70,14 +70,14 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 		  }
 		  Total->Evap.EPot[Veg->MaxLayers] += Evap[y][x].EPot[NVegL];
 		  Total->Evap.EAct[Veg->MaxLayers] += Evap[y][x].EAct[NVegL];
-		  
+
 		  for (i = 0; i < NVegL; i++) {
 			  for (j = 0; j < NSoilL; j++) {
 				  Total->Evap.ESoil[i][j] += Evap[y][x].ESoil[i][j];
 			  }
 		  }
 		  Total->Evap.EvapSoil += Evap[y][x].EvapSoil;
-		  
+
 		  /* aggregate precipitation data */
 		  Total->Precip.Precip += Precip[y][x].Precip;
           Total->Precip.SnowFall += Precip[y][x].SnowFall;
@@ -135,6 +135,54 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 		  Total->Veg.Type[Opening].Swq += VegMap[y][x].Type[Opening].Swq;
 		  Total->Veg.Type[Opening].MeltEnergy += VegMap[y][x].Type[Opening].MeltEnergy;
 		}
+
+		if (VegMap[y][x].FORfrac > 0.0 ) {
+		  Total->Veg.Tile[NorthFacing].Qsw         += VegMap[y][x].Tile[NorthFacing].Qsw;
+		  Total->Veg.Tile[NorthFacing].Qlin        += VegMap[y][x].Tile[NorthFacing].Qlin;
+          Total->Veg.Tile[NorthFacing].Qlw         += VegMap[y][x].Tile[NorthFacing].Qlw;
+		  Total->Veg.Tile[NorthFacing].Qe          += VegMap[y][x].Tile[NorthFacing].Qe;
+		  Total->Veg.Tile[NorthFacing].Qs          += VegMap[y][x].Tile[NorthFacing].Qs;
+		  Total->Veg.Tile[NorthFacing].Qp          += VegMap[y][x].Tile[NorthFacing].Qp;
+		  Total->Veg.Tile[NorthFacing].Swq         += VegMap[y][x].Tile[NorthFacing].Swq;
+		  Total->Veg.Tile[NorthFacing].MeltEnergy  += VegMap[y][x].Tile[NorthFacing].MeltEnergy;
+		  Total->Veg.Tile[NorthFacing].LongIn[1]   += VegMap[y][x].Tile[NorthFacing].LongIn[1];
+		  Total->Veg.Tile[NorthFacing].NetShort[1] += VegMap[y][x].Tile[NorthFacing].NetShort[1];
+
+          Total->Veg.Tile[SouthFacing].Qsw        += VegMap[y][x].Tile[SouthFacing].Qsw;
+		  Total->Veg.Tile[SouthFacing].Qlin       += VegMap[y][x].Tile[SouthFacing].Qlin;
+          Total->Veg.Tile[SouthFacing].Qlw        += VegMap[y][x].Tile[SouthFacing].Qlw;
+		  Total->Veg.Tile[SouthFacing].Qe         += VegMap[y][x].Tile[SouthFacing].Qe;
+		  Total->Veg.Tile[SouthFacing].Qs         += VegMap[y][x].Tile[SouthFacing].Qs;
+		  Total->Veg.Tile[SouthFacing].Qp         += VegMap[y][x].Tile[SouthFacing].Qp;
+		  Total->Veg.Tile[SouthFacing].Swq        += VegMap[y][x].Tile[SouthFacing].Swq;
+		  Total->Veg.Tile[SouthFacing].MeltEnergy += VegMap[y][x].Tile[SouthFacing].MeltEnergy;
+		  Total->Veg.Tile[SouthFacing].LongIn[1]   += VegMap[y][x].Tile[SouthFacing].LongIn[1];
+		  Total->Veg.Tile[SouthFacing].NetShort[1] += VegMap[y][x].Tile[SouthFacing].NetShort[1];
+
+          Total->Veg.Tile[Exposed].Qsw        += VegMap[y][x].Tile[Exposed].Qsw;
+		  Total->Veg.Tile[Exposed].Qlin       += VegMap[y][x].Tile[Exposed].Qlin;
+          Total->Veg.Tile[Exposed].Qlw        += VegMap[y][x].Tile[Exposed].Qlw;
+		  Total->Veg.Tile[Exposed].Qe         += VegMap[y][x].Tile[Exposed].Qe;
+		  Total->Veg.Tile[Exposed].Qs         += VegMap[y][x].Tile[Exposed].Qs;
+		  Total->Veg.Tile[Exposed].Qp         += VegMap[y][x].Tile[Exposed].Qp;
+		  Total->Veg.Tile[Exposed].Swq        += VegMap[y][x].Tile[Exposed].Swq;
+		  Total->Veg.Tile[Exposed].MeltEnergy += VegMap[y][x].Tile[Exposed].MeltEnergy;
+		  Total->Veg.Tile[Exposed].LongIn[1]   += VegMap[y][x].Tile[Exposed].LongIn[1];
+		  Total->Veg.Tile[Exposed].NetShort[1] += VegMap[y][x].Tile[Exposed].NetShort[1];
+
+          Total->Veg.Tile[ForestTile].Qsw        += VegMap[y][x].Tile[ForestTile].Qsw;
+		  Total->Veg.Tile[ForestTile].Qlin       += VegMap[y][x].Tile[ForestTile].Qlin;
+          Total->Veg.Tile[ForestTile].Qlw        += VegMap[y][x].Tile[ForestTile].Qlw;
+		  Total->Veg.Tile[ForestTile].Qe         += VegMap[y][x].Tile[ForestTile].Qe;
+		  Total->Veg.Tile[ForestTile].Qs         += VegMap[y][x].Tile[ForestTile].Qs;
+		  Total->Veg.Tile[ForestTile].Qp         += VegMap[y][x].Tile[ForestTile].Qp;
+		  Total->Veg.Tile[ForestTile].Swq        += VegMap[y][x].Tile[ForestTile].Swq;
+		  Total->Veg.Tile[ForestTile].MeltEnergy += VegMap[y][x].Tile[ForestTile].MeltEnergy;
+		  Total->Veg.Tile[ForestTile].LongIn[1]   += VegMap[y][x].Tile[ForestTile].LongIn[1];
+		  Total->Veg.Tile[ForestTile].NetShort[1] += VegMap[y][x].Tile[ForestTile].NetShort[1];
+
+		}
+
 		/* aggregate soil moisture data */
 		Total->Soil.Depth += SoilMap[y][x].Depth;
 		DeepDepth = 0.0;
@@ -144,7 +192,7 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 			assert(SoilMap[y][x].Moist[i] >= 0.0);
 			Total->Soil.Perc[i] += SoilMap[y][x].Perc[i];
 			Total->Soil.Temp[i] += SoilMap[y][x].Temp[i];
-			Total->SoilWater += SoilMap[y][x].Moist[i] * VType[VegMap[y][x].Veg - 1].RootDepth[i] * Network[y][x].Adjust[i]; 
+			Total->SoilWater += SoilMap[y][x].Moist[i] * VType[VegMap[y][x].Veg - 1].RootDepth[i] * Network[y][x].Adjust[i];
 			DeepDepth += VType[VegMap[y][x].Veg - 1].RootDepth[i];
 		}
 
@@ -154,7 +202,7 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 
 		if (SoilMap[y][x].TableDepth <= 0)
 			(Total->Saturated)++;
-		
+
 		Total->Soil.WaterLevel += SoilMap[y][x].WaterLevel;
 		Total->Soil.SatFlow += SoilMap[y][x].SatFlow;
 		Total->Soil.TSurf += SoilMap[y][x].TSurf;
@@ -165,10 +213,10 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 		Total->Soil.Qst += SoilMap[y][x].Qst;
 		Total->Soil.IExcess += SoilMap[y][x].IExcess;
 		Total->Soil.DetentionStorage += SoilMap[y][x].DetentionStorage;
-		
+
 		if (Options->Infiltration == DYNAMIC)
 			Total->Soil.InfiltAcc += SoilMap[y][x].InfiltAcc;
-		
+
 		Total->Soil.Runoff += SoilMap[y][x].Runoff;
 		Total->ChannelInt += SoilMap[y][x].ChannelInt;
 		SoilMap[y][x].ChannelInt = 0.0;
@@ -249,6 +297,56 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 	Total->Veg.Type[Opening].Swq /= TotNumGap;
 	Total->Veg.Type[Opening].MeltEnergy /= TotNumGap;
   }
+
+  if (TotNumTile > 0) {
+	Total->Veg.Tile[NorthFacing].Qsw /= TotNumTile;
+	Total->Veg.Tile[NorthFacing].Qlin /= TotNumTile;
+	Total->Veg.Tile[NorthFacing].Qlw /= TotNumTile;
+	Total->Veg.Tile[NorthFacing].Qe /= TotNumTile;
+	Total->Veg.Tile[NorthFacing].Qs /= TotNumTile;
+	Total->Veg.Tile[NorthFacing].Qp /= TotNumTile;
+	Total->Veg.Tile[NorthFacing].Swq /= TotNumTile;
+	Total->Veg.Tile[NorthFacing].MeltEnergy /= TotNumTile;
+	Total->Veg.Tile[NorthFacing].LongIn[1]   /= TotNumTile;
+	Total->Veg.Tile[NorthFacing].NetShort[1] /= TotNumTile;
+
+	Total->Veg.Tile[SouthFacing].Qsw /= TotNumTile;
+	Total->Veg.Tile[SouthFacing].Qlin /= TotNumTile;
+	Total->Veg.Tile[SouthFacing].Qlw /= TotNumTile;
+	Total->Veg.Tile[SouthFacing].Qe /= TotNumTile;
+	Total->Veg.Tile[SouthFacing].Qs /= TotNumTile;
+	Total->Veg.Tile[SouthFacing].Qp /= TotNumTile;
+	Total->Veg.Tile[SouthFacing].Swq /= TotNumTile;
+	Total->Veg.Tile[SouthFacing].MeltEnergy /= TotNumTile;
+	Total->Veg.Tile[SouthFacing].LongIn[1]   /= TotNumTile;
+	Total->Veg.Tile[SouthFacing].NetShort[1] /= TotNumTile;
+
+	Total->Veg.Tile[Exposed].Qsw /= TotNumTile;
+	Total->Veg.Tile[Exposed].Qlin /= TotNumTile;
+	Total->Veg.Tile[Exposed].Qlw /= TotNumTile;
+	Total->Veg.Tile[Exposed].Qe /= TotNumTile;
+	Total->Veg.Tile[Exposed].Qs /= TotNumTile;
+	Total->Veg.Tile[Exposed].Qp /= TotNumTile;
+	Total->Veg.Tile[Exposed].Swq /= TotNumTile;
+	Total->Veg.Tile[Exposed].MeltEnergy /= TotNumTile;
+	Total->Veg.Tile[Exposed].LongIn[1]   /= TotNumTile;
+	Total->Veg.Tile[Exposed].NetShort[1] /= TotNumTile;
+
+    Total->Veg.Tile[ForestTile].Qsw /= TotNumTile;
+	Total->Veg.Tile[ForestTile].Qlin /= TotNumTile;
+	Total->Veg.Tile[ForestTile].Qlw /= TotNumTile;
+	Total->Veg.Tile[ForestTile].Qe /= TotNumTile;
+	Total->Veg.Tile[ForestTile].Qs /= TotNumTile;
+	Total->Veg.Tile[ForestTile].Qp /= TotNumTile;
+	Total->Veg.Tile[ForestTile].Swq /= TotNumTile;
+	Total->Veg.Tile[ForestTile].MeltEnergy  /= TotNumTile;
+	Total->Veg.Tile[ForestTile].LongIn[1]   /= TotNumTile;
+	Total->Veg.Tile[ForestTile].NetShort[1] /= TotNumTile;
+
+
+
+  }
+
   /* average soil moisture data */
   Total->Soil.Depth /= NPixels;
   for (i = 0; i < Soil->MaxLayers; i++) {
@@ -269,7 +367,7 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
   Total->Soil.IExcess /= NPixels;
   Total->Soil.DetentionStorage /= NPixels;
   Total->Road.IExcess /= NPixels;
-  
+
   if (Options->Infiltration == DYNAMIC)
     Total->Soil.InfiltAcc /= NPixels;
 

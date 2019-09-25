@@ -8,9 +8,9 @@
  * ORIG-DATE:    Apr-1996
  * DESCRIPTION:  header file with data structures
  * DESCRIP-END.
- * FUNCTIONS:    
+ * FUNCTIONS:
  * COMMENTS:
-* $Id: data.h, v 3.1.1  2012/10/31   Ning Exp $ 
+* $Id: data.h, v 3.1.1  2012/10/31   Ning Exp $
  */
 
 #ifndef DATA_H
@@ -106,11 +106,11 @@ typedef struct {
   char MM5Wind[BUFSIZE + 1];	/* File with MM5 wind speed (m/s) */
   char MM5ShortWave[BUFSIZE + 1];	/* File with MM5 shortwave (W/m2) */
   char MM5LongWave[BUFSIZE + 1];	/* File with MM5 longwave (W/m2) */
-  char MM5Precipitation[BUFSIZE + 1];	/* File with MM5 precipitation 
+  char MM5Precipitation[BUFSIZE + 1];	/* File with MM5 precipitation
 					   (m/timestep) */
   char **MM5SoilTemp;		/* Files with MM5 soil temperatures (C) */
   MM5FREQ MM5PrecipDistFreq;    /* Frequency of MM5 precip distribution maps */
-  char PrecipLapseFile[BUFSIZE + 1];	/* File with precipitation 
+  char PrecipLapseFile[BUFSIZE + 1];	/* File with precipitation
 					   lapse rate map */
   char WindMapPath[BUFSIZE + 1];	/* File with wind factors */
 } INPUTFILES;
@@ -125,7 +125,7 @@ typedef struct {
   float Tair;			/* Air temperature (C) */
   float Rh;			    /* Relative humidity (%) */
   float Wind;			/* Wind (m/s) */
-  float VICSin;         /* Observed incoming shortwave radiation 
+  float VICSin;         /* Observed incoming shortwave radiation
                            without topographic or canopy shading (W/m2) */
   float Sin;			/* Incoming shortwave adjusted for topographic shading (W/m^2) */
   float SinBeam;		/* Incoming beam radiation (W/m^2) */
@@ -199,8 +199,8 @@ typedef struct {
 } METLOCATION;
 
 typedef struct {
-  int NGrids;            
-  int Decimal;  
+  int NGrids;
+  int Decimal;
   float LatNorth;               /* extreme north latitude */
   float LonEast;                /* extreme east longitude */
   float LatSouth;               /* extreme south latitude */
@@ -222,14 +222,14 @@ typedef struct {
   int CressRadius;
   int CressStations;
   int WindSource;				/* Wind source indicator, either MODEL or STATION */
-  int HeatFlux;					/* Specifies whether a sensible heat flux 
+  int HeatFlux;					/* Specifies whether a sensible heat flux
                            should be calculated, TRUE or FALSE */
   int Infiltration;     /* Specifies static or dynamic maximum infiltration rate */
   int FlowGradient;			/* Specifies whether the flow gradient is based
-                           on the terrain elevation (TOPOGRAPHY) or the 
-                           water table elevation (WATERTABLE).  The 
-                           TOPOGRAPHY method is much faster, since the 
-                           flow direction and gradient do not have to 
+                           on the terrain elevation (TOPOGRAPHY) or the
+                           water table elevation (WATERTABLE).  The
+                           TOPOGRAPHY method is much faster, since the
+                           flow direction and gradient do not have to
                            be recalculated every timestep */
   int Extent;					  /* Specifies the extent of the model run, either POINT or BASIN */
   int Interpolation;
@@ -246,6 +246,7 @@ typedef struct {
   int CanopyShading;
   int ImprovRadiation;          /* if TRUE then improved radiation scheme is on */
   int CanopyGapping;            /* if canopy gapping is on */
+  int CanopyTiling;             /* if canopy tiling is on */
   int SnowSlide;                /* if snow sliding option is true */
   int PrecipSepr;               /* if TRUE use separate input of rain and snow */
   char PrismDataPath[BUFSIZE + 1];
@@ -253,8 +254,8 @@ typedef struct {
   char ShadingDataPath[BUFSIZE + 1];
   char ShadingDataExt[BUFSIZE + 1];
   char SkyViewDataPath[BUFSIZE + 1];
-  char ImperviousFilePath[BUFSIZ + 1];      
-  char PrecipMultiplierMapPath[BUFSIZ + 1];  
+  char ImperviousFilePath[BUFSIZ + 1];
+  char PrecipMultiplierMapPath[BUFSIZ + 1];
 } OPTIONSTRUCT;
 
 typedef struct {
@@ -266,7 +267,7 @@ typedef struct {
   float *IntRain;		        /* Rain interception by each vegetation layer (m) */
   float *IntSnow;		        /* Snow interception by each vegetation layer (m) */
   float TempIntStorage;			/* Temporary snow and rain interception storage, used by MassRelease() */
-  int PrecipStart;          /* TRUE if there was surface water in the last time step */ 
+  int PrecipStart;          /* TRUE if there was surface water in the last time step */
   float Dm;                 /* Median raindrop diameter (m) */
  } PRECIPPIX;
 
@@ -286,7 +287,7 @@ typedef struct {
   float BeamIn;             /* Incoming beam radiation */
   float DiffuseIn;          /* Incomning diffuse radiation */
   float Tair;               /* Air temperature */
-  // for RBM use only 
+  // for RBM use only
   float RBMNetLong;         /* Longwave radiation reaching the water surface W/m2 (for RBM only) */
   float RBMNetShort;        /* Shortwave radiation reaching the water surface W/m2 (for RBM only) */
   float PixelBeam;          /* Net beam radiation W/m2 (used for RBM only) */
@@ -326,7 +327,7 @@ typedef struct {
 
   float SunEarthDistance;	/* Distance from Sun to Earth */
   float SineSolarAltitude;	/* Sine of sun's SolarAltitude  */
-  int DayLight;				/* FALSE: measured solar radiation and the sun is below the horizon.  
+  int DayLight;				/* FALSE: measured solar radiation and the sun is below the horizon.
 
 							TRUE: sun is above the horizon */
   float SolarTimeStep;		/* Fraction of the timestep the sun is above the horizon  */
@@ -351,7 +352,7 @@ typedef struct {
   float Albedo;				/* Albedo of snow pack */
   float Depth;				/* Snow depth; Does not appear to be calculated
 							   or used anywhere */
-  float VaporMassFlux;		/* Vapor mass flux to/from snow pack,(m/timestep). 
+  float VaporMassFlux;		/* Vapor mass flux to/from snow pack,(m/timestep).
                                A negataive value indicates flux from snow -- sublimiation */
   float CanopyVaporMassFlux;/* Vapor mass flux to/from intercepted snow in the canopy (m/timestep) */
   float Glacier;		    /* Amount of snow added to glacier during simulation */
@@ -383,7 +384,7 @@ typedef struct {
   float *Perc;			/* Percolation from layers */
   float *Temp;			/* Temperature in each layer (C) */
   float TableDepth;		/* Depth of water table below ground surface (m) */
-  float WaterLevel;		/* Absolute height of the watertable above datum (m), 
+  float WaterLevel;		/* Absolute height of the watertable above datum (m),
 						i.e. corrected for terrain elevation */
   float SatFlow;		/* amount of saturated flow generated */
   float IExcess;		/* amount of surface runoff (m) generated from HOF and Return flow */
@@ -506,15 +507,77 @@ typedef struct
   float Qp;                     /* advected heat from rain input */
 } CanopyGapStruct;
 
+typedef struct
+{
+  uchar HasSnow;			    /* Snow cover flag determined by SWE */
+  unshort LastSnow;			    /* Days since last snowfall */
+  int NVegLActual;		        /* Number of vegetation layers above snow */
+  float Albedo;				    /* Albedo of snow pack */
+  float TSurf;				    /* Temperature of snow pack surface layer */
+  unsigned char OverStory;	    /* TRUE if there is an overstory */
+  unsigned char UnderStory;	    /* TRUE if there is an understory */
+  unsigned char SouthFacingInt;	/* TRUE if it is a south-facing edge  - used for radiation decisions (0 or 1)  */
+  unsigned char NorthFacingInt;	/* TRUE if it is a north-facing edge - used for radiation decisions (0 or 1)  */
+  unsigned char ExposedInt;     /* TRUE if it is a exposed tile - used for radiation decisions (0 or 1) */
+  unsigned char ForestInt;      /* TRUE if it is a forest tile - used for radiation decisions (0 or 1) */
+  float NetRadiation[2];        /* Net radiation received by the entire pixel W/m2 */
+  float NetShort[2];            /* Shortwave radiation for vegetation surfaces and ground/snow surface W/m2 */
+  float LongIn[2];		        /* Incoming longwave radiation for vegetation surfaces and ground/snow surface W/m2 */
+  float LongOut[2];		        /* Outgoing longwave radiation fosr vegetation surfaces and ground/snow surface W/m2 */
+  float PixelLongIn;	        /* Incoming longwave for entire pixel W/m2 */
+  float PixelLongOut;	        /* Outgoing longwave for entire pixel W/m2 */
+  float Precip;					/* Total amount of precipitation at pixel (m) */
+  float SumPrecip;              /* Accumulated precipitation at pixel (m) */
+  float RainFall;		        /* Amount of rainfall (m) */
+  float SnowFall;		        /* Amount of snowfall determined by air temperature (m) */
+  float *IntRain;		        /* Rain interception by each vegetation layer (m) */
+  float *IntSnow;		        /* Snow interception by each vegetation layer (m) */
+  float CanopyVaporMassFlux;    /* Vapor mass flux to/from intercepted snow in the canopy (m/timestep) */
+  float TempIntStorage;			/* Temporary snow and rain interception storage, used by MassRelease() */
+  float Tcanopy;		        /* Canopy temperature (C) */
+  float MeltEnergy;			    /* Energy used to melt snow and change of cold content of snow pack */
+  float MoistureFlux;		    /* Amount of water transported from the pixel
+                                to the atmosphere (m/timestep) */
+  float Ra[2];			        /* Aerodynamic resistance in the absence of snow  */
+  float RaSnow;			        /* Aerodynamic resistance for the lower boundary in the presence of snow */
+  float U[2];			        /* Wind speed profile (m/s) */
+  float USnow;			        /* wind speed 2, above snow surface (m/s) */
+  float SnowPackOutflow;		/* Snow pack outflow (m) */
+  float Swq;				    /* Snow water equivalent */
+  float PackWater;			    /* Liquid water content of snow pack */
+  float TPack;				    /* Temperature of snow pack */
+  float SurfWater;			    /* Liquid water content of surface layer */
+  float VaporMassFlux;		    /* Vapor mass flux to/from snow pack,(m/timestep).
+                                A negataive value indicates flux from snow -- sublimiation */
+  float *Moist;			        /* Soil moisture content in layers (0-1) */
+  float EvapSoil;		        /* Evaporation from the upper soil layer */
+  float ETot;			        /* Total amount of evapotranspiration */
+  float *EPot;			        /* Potential transpiration from each vegetation/soil layer */
+  float *EAct;			        /* Actual transpiration from each vegetation soil layer */
+  float *EInt;			        /* Evaporation from interception for each vegetation layer */
+  float **ESoil;		        /* Transpiration for each vegetation layer from each soil zone */
+  float Qsw;                    /* Net shortwave radiation exchange at surface */
+  float Qlin;                   /* Incoming longwave radiation */
+  float Qlw;                    /* Net longwave radiation exchange at surface */
+  float Qs;				        /* Sensible heat exchange */
+  float Qe;				        /* Latent heat exchange */
+  float Qp;                     /* advected heat from rain input */
+} TileStruct;
+
 typedef struct {
   int Veg;			            /* Vegetation type */
-  float Gapping;                  /* gap diameter*/
+  float Gapping;                /* gap diameter*/
+  float NFfrac;                 /* Fraction of grid cell that is North Facing Tile */
+  float SFfrac;                 /* Fraction of grid cell that is South Facing Tile */
+  float EXPfrac;                /* Fraction of grid cell that is Exposed Tile  */
+  float FORfrac;                /* Fraction of grid cell that is Forested */
   float Tcanopy;		        /* Canopy temperature (C) */
   float MoistureFlux;		    /* Amount of water transported from the pixel
                                    to the atmosphere (m/timestep) */
   float MeltEnergy;			    /* Energy used to melt snow and change of cold content
                                 of snow pack */
   CanopyGapStruct *Type;        /* canopy structure */
+  TileStruct *Tile;             /* tile structure */
 } VEGPIX;
 
 typedef struct {
@@ -532,18 +595,18 @@ typedef struct {
   float *MaxInt;		/* Maximum interception storage (m) */
   float *RsMax;			/* Maximum stomatal resistance */
   float *RsMin;			/* Minimum stomatal resistance */
-  float *MoistThres;	/* Soil moisture threshold above which soil 
+  float *MoistThres;	/* Soil moisture threshold above which soil
 						moisture does not restrict transpiration */
   float *VpdThres;		/* Vapor pressure deficit threshold above which
 						stomatal closure occurs (Pa) */
   float **RootFract;	/* Fraction of roots in each soil layer */
   float *RootDepth;		/* Depth of root zones */
   float Atten;			/* Canopy attenuation for radiation, only used
-						when the "canopy radiation attenuation" 
+						when the "canopy radiation attenuation"
 						option is set to fixed */
   float TotalDepth;		/* total depth of all root zones */
   float ClumpingFactor;	/* To convert LAI of overstory to Effective LAI
-					    for canopy attenuation of shortwave radiation 
+					    for canopy attenuation of shortwave radiation
 						taken after Chen and Black, 1991 */
   float Taud;			/* Transmission of Diffuse radiation through canopy */
 						/* a function of the following two parameters and
@@ -559,7 +622,7 @@ typedef struct {
   float MDRatio;		/* Ratio of Mass Release to Meltwater drip from int snow */
   float SnowIntEff;		/* Efficiency of snow interception process */
   float ImpervFrac;		/* fraction of pixel that is impervious */
-  float DetentionFrac;  /* fraction of flow on impervious area goes to flood detention storage */ 
+  float DetentionFrac;  /* fraction of flow on impervious area goes to flood detention storage */
   float DetentionDecay; /* Decay coefficient of linear reservoir storage for impervious surface detention facility.  */
   float Ra[2];			/* Aerodynamic resistance in the absence of snow  */
   float RaSnow;			/* Aerodynamic resistance for the lower boundary in the presence of snow */
@@ -569,7 +632,7 @@ typedef struct {
   float Vf;             /* Canopy view factor (0 - 1); Vf = VfAdjust*Fract */
   float VfAdjust;       /* Canopy view adjustment factor */
   float ExtnCoeff;            /* Light extinction coefficient varied by month */
-  float MonthlyExtnCoeff[12]; /* Monthly light extinction (or attenuation coeff); unit: m^-1; 
+  float MonthlyExtnCoeff[12]; /* Monthly light extinction (or attenuation coeff); unit: m^-1;
                              used in improved radiation scheme */
 } VEGTABLE;
 
@@ -599,7 +662,7 @@ struct node {
   int x;
   int y;
 };
- 
+
 typedef struct {
   EVAPPIX Evap;
   PRECIPPIX Precip;

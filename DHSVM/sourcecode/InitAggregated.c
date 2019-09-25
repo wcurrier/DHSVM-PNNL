@@ -78,4 +78,26 @@ void InitAggregated(OPTIONSTRUCT *Options, int MaxVegLayers, int MaxSoilLayers,
         ReportError("InitAggregated()", 1);
     }
   }
+
+  if (Options->CanopyTiling) {
+    if (!(Total->Veg.Tile = (TileStruct *)calloc(4, sizeof(TileStruct))))
+      ReportError("InitAggregated()", 1);
+    for (i = 0; i < TILE_PARTITION; i++) {
+      if (!(Total->Veg.Tile[i].EPot = (float *)calloc(MaxVegLayers + 1, sizeof(float))))
+        ReportError("InitAggregated()", 1);
+      if (!(Total->Veg.Tile[i].EAct = (float *)calloc(MaxVegLayers + 1, sizeof(float))))
+        ReportError("InitAggregated()", 1);
+      if (!(Total->Veg.Tile[i].EInt = (float *)calloc(MaxVegLayers, sizeof(float))))
+        ReportError("InitAggregated()", 1);
+      if (!(Total->Veg.Tile[i].ESoil = (float **)calloc(MaxVegLayers, sizeof(float *))))
+        ReportError("InitAggregated()", 1);
+      if (!(Total->Veg.Tile[i].IntRain = (float *)calloc(MaxVegLayers, sizeof(float))))
+        ReportError("InitAggregated()", 1);
+      if (!(Total->Veg.Tile[i].IntSnow = (float *)calloc(MaxVegLayers, sizeof(float))))
+        ReportError("InitAggregated()", 1);
+      if (!(Total->Veg.Tile[i].Moist = (float *)calloc(MaxSoilLayers + 1, sizeof(float))))
+        ReportError("InitAggregated()", 1);
+    }
+  }
+
 }

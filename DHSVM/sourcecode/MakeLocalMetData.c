@@ -10,7 +10,7 @@
 * DESCRIP-END.
 * FUNCTIONS:    MakeLocalMetData()
 * COMMENTS:
-* $Id: MakeLocalMetData.c,v3.2 2018/03/30 ning Exp $     
+* $Id: MakeLocalMetData.c,v3.2 2018/03/30 ning Exp $
 */
 
 #include <assert.h>
@@ -31,7 +31,7 @@ Function name: MakeLocalMetData()
 Purpose      : Generates meteorological for each individual cell
 
 Required     :
-int y 
+int y
 int x
 MAPSIZE Map
 int DayStep
@@ -40,7 +40,7 @@ int NStats
 METLOCATION *Stat
 uchar *MetWeights
 float LocalElev
-RADCLASSPIX *RadMap 
+RADCLASSPIX *RadMap
 PRECIPPIX *PrecipMap
 MAPSIZE Radar
 RADARPIX **RadarMap
@@ -60,7 +60,7 @@ PIXMET MakeLocalMetData(int y, int x, MAPSIZE *Map, int DayStep, int NDaySteps,
                         float LocalElev, PIXRAD *RadMap,
                         PRECIPPIX *PrecipMap, MAPSIZE *Radar,
                         RADARPIX **RadarMap, float **PrismMap,
-                        SNOWPIX *LocalSnow, CanopyGapStruct **Gap, VEGPIX *VegMap,
+                        SNOWPIX *LocalSnow, CanopyGapStruct **Gap, TileStruct **Tile, VEGPIX *VegMap,
                         float ***MM5Input, float ***WindModel,
                         float **PrecipLapseMap, MET_MAP_PIX ***MetMap,
                         float precipMultiplier, int NGraphics, int Month, float skyview,
@@ -68,7 +68,7 @@ PIXMET MakeLocalMetData(int y, int x, MAPSIZE *Map, int DayStep, int NDaySteps,
                         float SineSolarAltitude)
 {
   float CurrentWeight;		/* weight for current station */
-  float ScaleWind = 1;		/* Wind to be scaled by model factors if 
+  float ScaleWind = 1;		/* Wind to be scaled by model factors if
                             WindSource == MODEL */
   float Temp;			/* Temporary variable */
   float WeightSum;		/* sum of the weights */
@@ -96,7 +96,7 @@ PIXMET MakeLocalMetData(int y, int x, MAPSIZE *Map, int DayStep, int NDaySteps,
 
   if (Options->MM5 == TRUE) {
     LocalMet.Tair = MM5Input[MM5_temperature - 1][y][x] +
-      (LocalElev - MM5Input[MM5_terrain - 1][y][x]) * 
+      (LocalElev - MM5Input[MM5_terrain - 1][y][x]) *
       MM5Input[MM5_lapse - 1][y][x];
     LocalMet.Rh = MM5Input[MM5_humidity - 1][y][x];
     LocalMet.Wind = MM5Input[MM5_wind - 1][y][x];
@@ -105,13 +105,13 @@ PIXMET MakeLocalMetData(int y, int x, MAPSIZE *Map, int DayStep, int NDaySteps,
     if (Options->Shading == TRUE) {
       if (SunMax > 0.0) {
         SeparateRadiation(LocalMet.Sin, LocalMet.Sin / SunMax,
-          &(LocalMet.SinBeam), &(LocalMet.SinDiffuse)); 
+          &(LocalMet.SinBeam), &(LocalMet.SinDiffuse));
       }
       else {
         /* if sun is below horizon, the force all shortwave to zero */
         LocalMet.Sin = 0.0;
         LocalMet.SinBeam = 0.0;
-        LocalMet.SinDiffuse = 0.0; 
+        LocalMet.SinDiffuse = 0.0;
       }
     }
     LocalMet.Lin = MM5Input[MM5_longwave - 1][y][x];
@@ -140,10 +140,10 @@ PIXMET MakeLocalMetData(int y, int x, MAPSIZE *Map, int DayStep, int NDaySteps,
         LocalMet.Wind += CurrentWeight * Stat[i].Data.Wind;
       LocalMet.Lin += CurrentWeight * Stat[i].Data.Lin;
       LocalMet.Sin += CurrentWeight * Stat[i].Data.Sin;
-      
+
       LocalMet.SinBeam += CurrentWeight * Stat[i].Data.SinBeamObs;
       LocalMet.SinDiffuse += CurrentWeight * Stat[i].Data.SinDiffuseObs;
-      
+
       TempLapseRate += CurrentWeight * Stat[i].Data.TempLapse;
     }
     if (Options->WindSource == MODEL)
@@ -156,7 +156,7 @@ PIXMET MakeLocalMetData(int y, int x, MAPSIZE *Map, int DayStep, int NDaySteps,
     }
     /* WORK IN PROGRESS, taken from old DHSVM version */
     /* Air pressure */
-    /* In rare cases - i.e. when the lapse rate has a different sign for 
+    /* In rare cases - i.e. when the lapse rate has a different sign for
     different met stations - you can end up with a TemplapseRate of 0.0
     This will result in a crash, so a check was put in (Jul 28, 1997 - Bart
     Nijssen).  It is somewhat awkward to interpolate lapse rates anyway, so
@@ -179,7 +179,7 @@ PIXMET MakeLocalMetData(int y, int x, MAPSIZE *Map, int DayStep, int NDaySteps,
   /* into account the slope and aspect and topographic shading */
   /* of the local pixel.  If we wanted to use this value directly */
   /* then the correction to the observed beam w.r.t. a horizontal plane */
-  /* would be   
+  /* would be
   /*        actual = horizontal*shadefactor/255/sin(solar_altitude) */
   /* the sin(solar_altitude) is necessary to convert horizontal into the maximum */
   /* possible flux */
@@ -203,7 +203,7 @@ PIXMET MakeLocalMetData(int y, int x, MAPSIZE *Map, int DayStep, int NDaySteps,
 
   if (Options->Shading == TRUE) {
     /* commented by Ning. the program script used to generate the shadow files
-    are update to produce shadow factors ranging from 0 to 255 consistent with 
+    are update to produce shadow factors ranging from 0 to 255 consistent with
     arcinfo */
     LocalMet.SinBeam *= (float) shadow / 22.23191;
 
@@ -304,7 +304,16 @@ PIXMET MakeLocalMetData(int y, int x, MAPSIZE *Map, int DayStep, int NDaySteps,
       (*Gap)[j].Precip = PrecipMap->Precip;
     }
   }
-  
+
+
+  if (VegMap->FORfrac > 0.0 ) {
+    for (j = 0; j < TILE_PARTITION; j++) {
+      (*Tile)[j].SnowFall = PrecipMap->SnowFall;
+      (*Tile)[j].RainFall = PrecipMap->RainFall;
+      (*Tile)[j].Precip = PrecipMap->Precip;
+    }
+  }
+
   /* Local heat of vaporization, Eq. 4.2.1, Shuttleworth (1993) */
   LocalMet.Lv = 2501000 - 2361 * LocalMet.Tair;
 
@@ -350,6 +359,22 @@ PIXMET MakeLocalMetData(int y, int x, MAPSIZE *Map, int DayStep, int NDaySteps,
       }
       else
         (*Gap)[j].LastSnow = 0.;
+    }
+  }
+
+  /* if we chose to tile the snow maps */
+  if (VegMap->FORfrac > 0.0) {
+    for (j = 0; j < TILE_PARTITION; j++) {
+      if ((*Tile)[j].HasSnow) {
+        if ((*Tile)[j].SnowFall > 0.0)
+          (*Tile)[j].LastSnow = 0;
+        else
+          (*Tile)[j].LastSnow++;
+
+        (*Tile)[j].Albedo = CalcSnowAlbedo((*Tile)[j].TSurf, (*Tile)[j].LastSnow, LocalSnow, NDaySteps);
+      }
+      else
+        (*Tile)[j].LastSnow = 0.;
     }
   }
 

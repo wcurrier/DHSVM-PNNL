@@ -74,17 +74,17 @@ void CanopyGapSnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
     SnowLongIn = (*Gap)[Opening].LongIn[1];
     SnowNetShort = (*Gap)[Opening].NetShort[1];
 
-    SnowWind = (*Gap)[Opening].USnow * LocalMet->Wind;  
-    SnowRa = (*Gap)[Opening].RaSnow / LocalMet->Wind; 
-    
-    /* adjust the wind and Ra values for gap so they fall betwene open 
+    SnowWind = (*Gap)[Opening].USnow * LocalMet->Wind;
+    SnowRa = (*Gap)[Opening].RaSnow / LocalMet->Wind;
+
+    /* adjust the wind and Ra values for gap so they fall betwene open
     and forested values */
     tmp = VType->USnow*LocalMet->Wind; //forested snow wind
     SnowWind = tmp + (SnowWind- tmp)*GAPWIND_FACTOR;
 
     tmp = VType->RaSnow/LocalMet->Wind;
     SnowRa = tmp - (tmp-SnowRa)*GAPWIND_FACTOR;
-    
+
     OldTSurf = (*Gap)[Opening].TSurf;
     (*Gap)[Opening].SnowPackOutflow =
       SnowMelt(y, x, Dt, 2.+Z0_SNOW, 0.f, Z0_SNOW, SnowRa, LocalMet->AirDens,
@@ -354,8 +354,8 @@ Function name: CalcGapSurroudingET()
 
 Purpose      :
 *****************************************************************************/
-void CalcGapSurroudingET(int Dt, CanopyGapStruct **Gap, 
-  SOILTABLE *SType, VEGTABLE *VType, PIXRAD *LocalRad, PIXMET *LocalMet, 
+void CalcGapSurroudingET(int Dt, CanopyGapStruct **Gap,
+  SOILTABLE *SType, VEGTABLE *VType, PIXRAD *LocalRad, PIXMET *LocalMet,
   SOILPIX *LocalSoil, ROADSTRUCT *LocalNetwork, float UpperRa, float LowerRa)
 
 {
@@ -431,12 +431,12 @@ void AggregateCanopyGap(CanopyGapStruct **Gap, VEGPIX *LocalVeg,
 
   LocalPrecip->RainFall =
     weight*(*Gap)[Opening].RainFall + (1-weight)*(*Gap)[Forest].RainFall;
-  LocalPrecip->SnowFall = 
+  LocalPrecip->SnowFall =
     weight*(*Gap)[Opening].SnowFall + (1-weight)*(*Gap)[Forest].SnowFall;
-  LocalPrecip->Precip = 
+  LocalPrecip->Precip =
     weight*(*Gap)[Opening].Precip + (1-weight)*(*Gap)[Forest].Precip;
 
-  LocalSnow->Outflow = 
+  LocalSnow->Outflow =
     weight*(*Gap)[Opening].SnowPackOutflow + (1-weight)*(*Gap)[Forest].SnowPackOutflow;
   LocalSnow->CanopyVaporMassFlux =
     weight*(*Gap)[Opening].CanopyVaporMassFlux + (1-weight)*(*Gap)[Forest].CanopyVaporMassFlux;
@@ -444,21 +444,21 @@ void AggregateCanopyGap(CanopyGapStruct **Gap, VEGPIX *LocalVeg,
     weight*(*Gap)[Opening].VaporMassFlux + (1-weight)*(*Gap)[Forest].VaporMassFlux;
 
   for (i = 0; i < 2; i++) {
-    LocalRad->NetShort[i] = 
+    LocalRad->NetShort[i] =
       weight*(*Gap)[Opening].NetShort[i] + (1-weight)*(*Gap)[Forest].NetShort[i];
-    LocalRad->LongIn[i] = 
+    LocalRad->LongIn[i] =
       weight*(*Gap)[Opening].LongIn[i] + (1-weight)*(*Gap)[Forest].LongIn[i];
-    LocalRad->LongOut[i] = 
+    LocalRad->LongOut[i] =
       weight*(*Gap)[Opening].LongOut[i] + (1-weight)*(*Gap)[Forest].LongOut[i];
   }
 
-  LocalSnow->Swq = 
+  LocalSnow->Swq =
     weight*(*Gap)[Opening].Swq + (1-weight)*(*Gap)[Forest].Swq;
-  LocalSnow->TPack = 
+  LocalSnow->TPack =
     weight*(*Gap)[Opening].TPack + (1-weight)*(*Gap)[Forest].TPack;
-  LocalSnow->PackWater = 
+  LocalSnow->PackWater =
     weight*(*Gap)[Opening].PackWater + (1-weight)*(*Gap)[Forest].PackWater;
-  LocalSnow->SurfWater = 
+  LocalSnow->SurfWater =
     weight*(*Gap)[Opening].SurfWater + (1-weight)*(*Gap)[Forest].SurfWater;
 
   for (j = 0; j <= NSoil; j++) {

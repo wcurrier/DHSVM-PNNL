@@ -13,10 +13,10 @@
  *               IsValidDumpID()
  *               IsMultiLayer()
  * COMMENTS:     If the number of IDs increases it might be worthwhile to use a
- *               better, faster search.  This is not done here, because in the 
+ *               better, faster search.  This is not done here, because in the
  *               overall scheme of DHSVM it is not worth the programming effort
  *               right now.
- * $Id: VarID.c,v 1.7 2004/05/04 19:39:00 colleen Exp $     
+ * $Id: VarID.c,v 1.7 2004/05/04 19:39:00 colleen Exp $
  */
 
 #include <stdio.h>
@@ -65,11 +65,23 @@ struct {
       "Travel time", "%d",
       "hours", "Travel time", NC_SHORT, FALSE, FALSE, FALSE, 0}, {
   007, "Veg.CanopyGap",
-       "Canopy Gap", "%.2f", 
-       "", "Canopy Gap", NC_FLOAT, FALSE, FALSE, FALSE, 0 },{
+       "Canopy Gap", "%.2f",
+       "", "Canopy Gap", NC_FLOAT, FALSE, FALSE, FALSE, 0 }, {
+  010, "Veg.NFfrac",
+       "North Facing", "%.2f",
+       "", "North Facing", NC_FLOAT, FALSE, FALSE, FALSE, 0 }, {
+  011, "Veg.SFfrac",
+       "South Facing", "%.2f",
+       "", "South Facing", NC_FLOAT, FALSE, FALSE, FALSE, 0 }, {
+  012, "Veg.EXPfrac",
+       "Exposed", "%.2f",
+       "", "Exposed", NC_FLOAT, FALSE, FALSE, FALSE, 0 }, {
+  013, "Veg.FORfrac",
+       "Forest Tile", "%.2f",
+       "", "Forest Tile", NC_FLOAT, FALSE, FALSE, FALSE, 0 }, {
   100, "Met.PrecipMultiplier",
 	   "PptMultiplier", "%.8f",
-	   "", "Precipitation Multiplier", NC_FLOAT, FALSE, FALSE, FALSE, 0 },{
+	   "", "Precipitation Multiplier", NC_FLOAT, FALSE, FALSE, FALSE, 0 }, {
   101, "Evap.ETot",
       "Evapotranspiration (Total)", "%.4g",
       "m/timestep", "Total amount of evapotranspiration",
@@ -230,19 +242,19 @@ struct {
   801, "Tr",
       "Rain Temperature Threshold", "%.4f", "", "Rain Temperature Threshold", NC_FLOAT, FALSE, FALSE, FALSE, 0}, {
   802, "Snow.amax",
-      "Fresh Snow Albedo", "%.4f", "", "Fresh Snow Albedo", NC_FLOAT, FALSE, FALSE, FALSE, 0}, {        
+      "Fresh Snow Albedo", "%.4f", "", "Fresh Snow Albedo", NC_FLOAT, FALSE, FALSE, FALSE, 0}, {
   803, "Snow.LamdaAcc",
-      "Albedo lambda during accumulation", "%.4f", "", 
+      "Albedo lambda during accumulation", "%.4f", "",
       "Albedo decay lambda during accumulation", NC_FLOAT, FALSE, FALSE, FALSE, 0}, {
   804, "Snow.LamdaMelt",
-      "Albedo lambda during melt", "%.4f", "", 
+      "Albedo lambda during melt", "%.4f", "",
       "Albedo decay lambda during melt", NC_FLOAT, FALSE, FALSE, FALSE, 0}, {
   805, "Snow.MinAlbedoAcc",
-      "Min Albedo during accumulation", "%.4f", "", 
-      "Min Albedo during accumulation", NC_FLOAT, FALSE, FALSE, FALSE, 0}, {        
+      "Min Albedo during accumulation", "%.4f", "",
+      "Min Albedo during accumulation", NC_FLOAT, FALSE, FALSE, FALSE, 0}, {
   806, "Snow.MinAlbedoMelt",
-      "Min Albedo during melt", "%.4f", "", 
-      "Min Albedo during melt", NC_FLOAT, FALSE, FALSE, FALSE, 0}, {   
+      "Min Albedo during melt", "%.4f", "",
+      "Min Albedo during melt", NC_FLOAT, FALSE, FALSE, FALSE, 0}, {
   ENDOFLIST, "", "", "", "", "",
       ENDOFLIST, ENDOFLIST, ENDOFLIST, ENDOFLIST, ENDOFLIST}
 };

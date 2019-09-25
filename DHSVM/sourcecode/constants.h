@@ -8,9 +8,9 @@
  * ORIG-DATE:    Apr-1996
  * DESCRIPTION:  header file with constants for DHSVM
  * DESCRIP-END.
- * FUNCTIONS:    
+ * FUNCTIONS:
  * COMMENTS:
- * $Id: constants.h,v 3.1.1 2012/10/18 ning Exp $     
+ * $Id: constants.h,v 3.1.1 2012/10/18 ning Exp $
  */
 
 #ifndef CONSTANTS_H
@@ -18,6 +18,7 @@
 
 #define CELLFACTOR 3            /* For discretization of forest roads for kinematic wave routing */
 #define CELL_PARTITION 2        /* Number of veg type in a grid cell */
+#define TILE_PARTITION 4        /* Number of tiles within a grid cell */
 #define CH_ICE     (2100.0e3)	/* Volumetric heat capacity (J/(m3*C) of ice (0C) */
 #define CH_WATER   (4186.8e3)	/* Volumetric heat capacity (J/(m3*C) of water */
 #define CP         1013.0		/* Specific heat of moist air at constant pressure (J/(kg*C)) */
@@ -26,7 +27,7 @@
 #define D0_MULTIPLIER  0.63		/* Multiplier for vegetation height to get displacement height (m) */
 #define DZ_TOP      0.1			/* Thickness of soil surface layer for which heat stoarge change is calculated (m) */
 #define EPS         0.622		/* ratio of molecular weight of water vapor to that for dry air */
-#define FS_CRITERIA 1.0			/* Criteria for determining is a pixel is failed. 
+#define FS_CRITERIA 1.0			/* Criteria for determining is a pixel is failed.
                                    Pixels with factor of safety's less than this number, are considered failed */
 #define G           9.81		/* gravitational accelleration (m/(s^2)) */
 #define GRAMSPKG    1000.	    /* grams per kilogram */
@@ -42,10 +43,10 @@
 #define PI   3.14159265358979323846
 #define RADPHOUR    0.2617994   /* radians per hour: Earth's Rotation (2 PI rad/day) * (1 day/24 h) */
 #define RADPDEG     (PI/180.0)	/* radians per degree */
-#define ROADCROWN   0.02        /* This is the road crown slope, whether insloped,  
-								outsloped or crowned. This value was selected based 
+#define ROADCROWN   0.02        /* This is the road crown slope, whether insloped,
+								outsloped or crowned. This value was selected based
 								on the Road Preconstruction Handbook */
-#define SATPERCENT  0.2         /* Fraction of pixels which must exceed 
+#define SATPERCENT  0.2         /* Fraction of pixels which must exceed
 								MTHRESH in order to call the mass wasting algorithm
 								when running in the old mode. */
 #define SOLARCON    1360.	    /* Solar constant (W/m^2) */
@@ -78,7 +79,7 @@ extern float Z0_SNOW;					/* Roughness length for snow (m) */
 extern float Zref;						/* Reference height (m) */
 
 /* snow albedo decay curve */
-extern float ALB_MAX;                   /* fresh snow albedo */                                                               
+extern float ALB_MAX;                   /* fresh snow albedo */
 extern float ALB_ACC_LAMBDA;            /* snow freeze albedo cruve control parameters */
 extern float ALB_MELT_LAMBDA;           /* snow thaw albedo cruve control parameters */
 extern float ALB_ACC_MIN;
@@ -88,6 +89,7 @@ extern float MAX_SURFACE_SWE; 	       /* maximum depth of the surface layer in s
 
 extern float GAPWIND_FACTOR;
 extern int TotNumGap;                  /* total number of grid cells with a gap structure */
+extern int TotNumTile;                  /* total number of grid cells with a gap structure */
 
 extern float SNOWSLIDE1;               /* First Parameter in Snowslide equation */
 extern float SNOWSLIDE2;               /* Second Parameter in Snowslide equation */
