@@ -35,7 +35,7 @@ void ExecDump(MAPSIZE *Map, DATE *Current, DATE *Start, OPTIONSTRUCT *Options,
   MET_MAP_PIX **MetMap, VEGPIX **VegMap, LAYER *Veg, SOILPIX **SoilMap,
   ROADSTRUCT **Network, CHANNEL *ChannelData, LAYER *Soil,
   AGGREGATED *Total, UNITHYDRINFO *HydrographInfo,
-  float *Hydrograph)
+  float *Hydrograph, VEGTABLE *VType)
 {
   int i;			/* counter */
   int j;			/* counter */
@@ -49,7 +49,7 @@ void ExecDump(MAPSIZE *Map, DATE *Current, DATE *Start, OPTIONSTRUCT *Options,
   DumpPix(Current, IsEqualTime(Current, Start), &(Dump->Aggregate),
     &(Total->Evap), &(Total->Precip), &(Total->Rad), &(Total->Snow),
     &(Total->Soil), &(Total->Veg), Soil->MaxLayers, Veg->MaxLayers,
-    Options, flag);
+    Options, flag, VType);
 
   fprintf(Dump->Aggregate.FilePtr, "\n");
 
@@ -86,7 +86,7 @@ void ExecDump(MAPSIZE *Map, DATE *Current, DATE *Start, OPTIONSTRUCT *Options,
       DumpPix(Current, IsEqualTime(Current, Start), &(Dump->Pix[i].OutFile),
         &(EvapMap[y][x]), &(PrecipMap[y][x]), &(RadMap[y][x]), &(SnowMap[y][x]),
         &(SoilMap[y][x]), &(VegMap[y][x]), Soil->NLayers[(SoilMap[y][x].Soil - 1)],
-        Veg->NLayers[(VegMap[y][x].Veg - 1)], Options, flag);
+        Veg->NLayers[(VegMap[y][x].Veg - 1)], Options, flag, VType);
       fprintf(Dump->Pix[i].OutFile.FilePtr, "\n");
     }
 
@@ -1101,7 +1101,7 @@ DumpPix()
 *****************************************************************************/
 void DumpPix(DATE *Current, int first, FILES *OutFile, EVAPPIX *Evap,
   PRECIPPIX *Precip, PIXRAD *Rad, SNOWPIX *Snow, SOILPIX *Soil,
-  VEGPIX *Veg, int NSoil, int NCanopyStory, OPTIONSTRUCT *Options, int flag)
+  VEGPIX *Veg, int NSoil, int NCanopyStory, OPTIONSTRUCT *Options, int flag, VEGTABLE *VType)
 {
   int i, j;			/* counter */
   float W;      /* available water for runoff - used in NG-IDF */
@@ -1174,10 +1174,15 @@ void DumpPix(DATE *Current, int first, FILES *OutFile, EVAPPIX *Evap,
       if (Veg->Gapping > 0.0 )
         fprintf(OutFile->FilePtr, "Gap_SW GAP_LW");
     if (TotNumTile > 0)
-        fprintf(OutFile->FilePtr, "NF.NetShort NF.LongIn SF.NetShort SF.LongIn EXP.NetShort EXP.LongIn FOR.NetShort FOR.LongIn NF.Swq SF.Swq EXP.Swq FOR.Swq");
-
+        fprintf(OutFile->FilePtr, "NF.NetShort NF.LongIn NF.LongOut SF.NetShort SF.LongIn SF.LongOut EXP.NetShort EXP.LongIn EXP.LongOut FOR.NetShort FOR.LongIn For.LongOut NF.Swq SF.Swq EXP.Swq FOR.Swq");
+    /*  if (flag == 2) */
+        if (TotNumTile > 0)
+            fprintf(OutFile->FilePtr, " FORfrac NFfrac SFfrac EXPfrac ");
+    if (TotNumTile > 0)
+        fprintf(OutFile->FilePtr, "forAlb nfAlb sfAlb expAlb ");
+    if (TotNumTile > 0)
+        fprintf(OutFile->FilePtr, "forTSrf nfTSrf sfTSrf expTSrf ");
     fprintf(OutFile->FilePtr, "\n");
-
   }
 
   /* All variables are dumped in the case of a pixel dump */
@@ -1263,16 +1268,22 @@ void DumpPix(DATE *Current, int first, FILES *OutFile, EVAPPIX *Evap,
 
   /* Write Out Tile Radiation */
   if (TotNumTile > 0)
-      fprintf(OutFile->FilePtr, " %g %g %g %g %g %g %g %g %g %g %g %g",
-        Veg->Tile[NorthFacing].NetShort[1], Veg->Tile[NorthFacing].LongIn[1], /* Overstory True, 1 = Understory */
-        Veg->Tile[SouthFacing].NetShort[1], Veg->Tile[SouthFacing].LongIn[1], /* Overstory True, 1 = Understory */
-        Veg->Tile[Exposed].NetShort[1],     Veg->Tile[Exposed].LongIn[1],     /* Overstory True, 1 = Understory */
-        Veg->Tile[ForestTile].NetShort[1],  Veg->Tile[ForestTile].LongIn[1],  /* Overstory True, 1 = Understory */
+      fprintf(OutFile->FilePtr, " %g %g %g %g %g %g %g %g %g %g %g %g %g %g %g %g",
+        Veg->Tile[NorthFacing].NetShort[1], Veg->Tile[NorthFacing].LongIn[1], Veg->Tile[NorthFacing].LongOut[1], /* Overstory True, 1 = Understory */
+        Veg->Tile[SouthFacing].NetShort[1], Veg->Tile[SouthFacing].LongIn[1], Veg->Tile[SouthFacing].LongOut[1], /* Overstory True, 1 = Understory */
+        Veg->Tile[Exposed].NetShort[1],     Veg->Tile[Exposed].LongIn[1], Veg->Tile[Exposed].LongOut[1],     /* Overstory True, 1 = Understory */
+        Veg->Tile[ForestTile].NetShort[1],  Veg->Tile[ForestTile].LongIn[1], Veg->Tile[ForestTile].LongOut[1],  /* Overstory True, 1 = Understory */
         Veg->Tile[NorthFacing].Swq,
         Veg->Tile[SouthFacing].Swq,
         Veg->Tile[Exposed].Swq,
         Veg->Tile[ForestTile].Swq);
-
+  /* if (flag == 2) */
+      fprintf(OutFile->FilePtr, " %g %g %g %g", Veg->FORfrac, Veg->NFfrac, Veg->SFfrac, Veg->EXPfrac);
+  if (TotNumTile > 0)
+      fprintf(OutFile->FilePtr, " %g %g %g %g", Veg->Tile[NorthFacing].Albedo, Veg->Tile[SouthFacing].Albedo,
+                                                Veg->Tile[Exposed].Albedo, Veg->Tile[ForestTile].Albedo);
+      fprintf(OutFile->FilePtr, " %g %g %g %g", Veg->Tile[NorthFacing].TSurf, Veg->Tile[SouthFacing].TSurf,
+                                                Veg->Tile[Exposed].TSurf, Veg->Tile[ForestTile].TSurf);
 }
 
 

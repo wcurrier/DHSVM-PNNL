@@ -589,6 +589,8 @@ typedef struct {
   unsigned char UnderStory;	/* TRUE if there is an understory */
   float *Height;		/* Height of vegetation (m) */
   float *Fract;			/* Fractional coverage */
+  float *FractNF;       /* Fractional coverage for north-facing edge */
+  float *FractSF;       /* Fractional coverage for south-facing edge */
   float *HemiFract;		/* used to calculated longwave radiation balance */
   float *LAI;			/* One Sided Leaf Area Index */
   float **LAIMonthly;	/* Monthly LAI (one-sided) */
@@ -611,6 +613,10 @@ typedef struct {
   float Taud;			/* Transmission of Diffuse radiation through canopy */
 						/* a function of the following two parameters and
 						effective LAI (which can change monthly) */
+  float TaudNF;         /* Transmission of Diffuse radiation through the canopy and
+                           to the north-facing fraction of the canopy - Tile Only */
+  float TaudSF;			/* Transmission of Diffuse radiation through the canopy and
+                           to the south-facing fraction of the canopy - Tile Only */
   float LeafAngleA;		/* parameter describing the Leaf Angle Distribution */
   float LeafAngleB;		/* parameter describing the leaf Angle Distribution */
   float Scat;			/* scattering parameter (between 0.7 and 0.85) */

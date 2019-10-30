@@ -756,7 +756,7 @@ void OverStoryET(int Dt, TileStruct **Tile,
   if (VType->OverStory == TRUE) {
     Rp = VISFRACT * (*Tile)[ForestTile].NetShort[0];
     NetRadiation = (*Tile)[ForestTile].NetShort[0] +
-      (*Tile)[ForestTile].LongIn[0] - 2 * VType->Fract[0] *(*Tile)[ForestTile].LongOut[0];
+      (*Tile)[ForestTile].LongIn[0] - 2 * VType->Vf *(*Tile)[ForestTile].LongOut[0];
     (*Tile)[ForestTile].NetRadiation[0] = NetRadiation;
 
     EvapoTranspiration(0, 1, Dt, LocalMet, NetRadiation,

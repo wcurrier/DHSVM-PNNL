@@ -35,7 +35,7 @@
 /*				  InitTables()                                 */
 
 /*******************************************************************************/
-void InitTables(int StepsPerDay, LISTPTR Input, OPTIONSTRUCT *Options, 
+void InitTables(int StepsPerDay, LISTPTR Input, OPTIONSTRUCT *Options,
   MAPSIZE *Map, SOILTABLE **SType, LAYER *Soil, VEGTABLE **VType,
   LAYER *Veg)
 {
@@ -273,11 +273,15 @@ int InitVegTable(VEGTABLE **VType, LISTPTR Input, OPTIONSTRUCT *Options, LAYER *
     "OVERSTORY PRESENT",
     "UNDERSTORY PRESENT",
     "FRACTIONAL COVERAGE",
+    "FRACTIONAL NORTH FACING COVERAGE",
+    "FRACTIONAL SOUTH FACING COVERAGE",
     "HEMI FRACT COVERAGE",
     "TRUNK SPACE",
     "AERODYNAMIC ATTENUATION",
     "RADIATION ATTENUATION",
     "DIFFUSE RADIATION ATTENUATION",
+    "DIFFUSE RADIATION ATTENUATION NF",
+    "DIFFUSE RADIATION ATTENUATION SF",
     "CLUMPING FACTOR",
     "LEAF ANGLE A",
     "LEAF ANGLE B",
@@ -397,6 +401,15 @@ int InitVegTable(VEGTABLE **VType, LISTPTR Input, OPTIONSTRUCT *Options, LAYER *
       sizeof(float))))
       ReportError((char *)Routine, 1);
 
+    if (Options->CanopyTiling) {
+        if (!((*VType)[i].FractNF = (float *)calloc((*VType)[i].NVegLayers,
+            sizeof(float))))
+            ReportError((char *)Routine, 1);
+
+        if (!((*VType)[i].FractSF = (float *)calloc((*VType)[i].NVegLayers,
+            sizeof(float))))
+            ReportError((char *)Routine, 1);
+    }
     if (Options->CanopyRadAtt == VARIABLE) {
       if (!((*VType)[i].HemiFract = (float *)calloc((*VType)[i].NVegLayers,
         sizeof(float))))
@@ -464,6 +477,10 @@ int InitVegTable(VEGTABLE **VType, LISTPTR Input, OPTIONSTRUCT *Options, LAYER *
     if ((*VType)[i].OverStory == TRUE) {
       if (!CopyFloat(&((*VType)[i].Fract[0]), VarStr[fraction], 1))
         ReportError(KeyName[fraction], 51);
+      if (!CopyFloat(&((*VType)[i].FractNF[0]), VarStr[fractionNF], 1))
+        ReportError(KeyName[fractionNF], 51);
+      if (!CopyFloat(&((*VType)[i].FractSF[0]), VarStr[fractionSF], 1))
+        ReportError(KeyName[fractionSF], 51);
       if (Options->CanopyRadAtt == VARIABLE) {
         if (!CopyFloat(&((*VType)[i].HemiFract[0]), VarStr[hemifraction], 1))
           ReportError(KeyName[hemifraction], 51);
@@ -485,10 +502,16 @@ int InitVegTable(VEGTABLE **VType, LISTPTR Input, OPTIONSTRUCT *Options, LAYER *
         (*VType)[i].LeafAngleA = NOT_APPLICABLE;
         (*VType)[i].LeafAngleB = NOT_APPLICABLE;
         (*VType)[i].Taud = NOT_APPLICABLE;
+        (*VType)[i].TaudNF = NOT_APPLICABLE;
+        (*VType)[i].TaudSF = NOT_APPLICABLE;
       }
       else if (Options->ImprovRadiation == TRUE) {
         if (!CopyFloat(&((*VType)[i].Taud), VarStr[diff_attn], 1))
           ReportError(KeyName[diff_attn], 51);
+        if (!CopyFloat(&((*VType)[i].TaudNF), VarStr[diff_attnNF], 1))
+          ReportError(KeyName[diff_attnNF], 51);
+        if (!CopyFloat(&((*VType)[i].TaudSF), VarStr[diff_attnSF], 1))
+          ReportError(KeyName[diff_attnSF], 51);
         (*VType)[i].Atten = NOT_APPLICABLE;
         (*VType)[i].ClumpingFactor = NOT_APPLICABLE;
         (*VType)[i].Scat = NOT_APPLICABLE;

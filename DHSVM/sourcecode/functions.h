@@ -76,7 +76,7 @@ void DumpMap(MAPSIZE *Map, DATE *Current, MAPDUMP *DMap, TOPOPIX **TopoMap,
 
 void DumpPix(DATE *Current, int first, FILES *OutFile, EVAPPIX *Evap,
         PRECIPPIX *Precip, PIXRAD *Rad, SNOWPIX *Snow, SOILPIX *Soil,
-        VEGPIX *Veg, int NSoil, int NVeg, OPTIONSTRUCT *Options, int flag);
+        VEGPIX *Veg, int NSoil, int NVeg, OPTIONSTRUCT *Options, int flag, VEGTABLE *VType);
 
 #ifdef TOPO_DUMP
 void DumpTopo(MAPSIZE *Map, TOPOPIX **TopoMap);
@@ -87,7 +87,7 @@ void ExecDump(MAPSIZE *Map, DATE *Current, DATE *Start, OPTIONSTRUCT *Options,
 	      PRECIPPIX ** PrecipMap, SNOWPIX **SnowMap, MET_MAP_PIX **MetMap,
           VEGPIX **VegMap, LAYER *Veg, SOILPIX **SoilMap, ROADSTRUCT **Network,
           CHANNEL *ChannelData, LAYER *Soil, AGGREGATED *Total,
-	      UNITHYDRINFO *HydrographInfo, float *Hydrograph);
+	      UNITHYDRINFO *HydrographInfo, float *Hydrograph, VEGTABLE *VType);
 
 unsigned char fequal(float a, float b);
 

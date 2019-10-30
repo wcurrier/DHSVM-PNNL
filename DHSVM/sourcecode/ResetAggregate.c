@@ -146,14 +146,20 @@ void ResetAggregate(LAYER * Soil, LAYER * Veg, AGGREGATED * Total,
 	  Total->Veg.Tile[i].Qp = 0;
 	  Total->Veg.Tile[i].Swq = 0;
 	  Total->Veg.Tile[i].MeltEnergy = 0;
+	  Total->Veg.Tile[i].Albedo = 0;
+	  Total->Veg.Tile[i].TSurf = 0;
 	}
 	  Total->Veg.Tile[SouthFacing].LongIn[1] = 0;
+	  Total->Veg.Tile[SouthFacing].LongOut[1] = 0;
 	  Total->Veg.Tile[SouthFacing].NetShort[1] = 0;
       Total->Veg.Tile[Exposed].LongIn[1] = 0;
+      Total->Veg.Tile[Exposed].LongOut[1] = 0;
 	  Total->Veg.Tile[Exposed].NetShort[1] = 0;
       Total->Veg.Tile[NorthFacing].LongIn[1] = 0;
+      Total->Veg.Tile[NorthFacing].LongOut[1] = 0;
 	  Total->Veg.Tile[NorthFacing].NetShort[1] = 0;
       Total->Veg.Tile[ForestTile].LongIn[1] = 0;
+      Total->Veg.Tile[ForestTile].LongOut[1] = 0;
 	  Total->Veg.Tile[ForestTile].NetShort[1] = 0;
   }
 }

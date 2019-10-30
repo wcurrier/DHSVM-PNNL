@@ -385,7 +385,7 @@ int main(int argc, char **argv)
 
     ExecDump(&Map, &(Time.Current), &(Time.Start), &Options, &Dump, TopoMap,
 	     EvapMap, RadiationMap, PrecipMap, SnowMap, MetMap, VegMap, &Veg,
-		 SoilMap, Network, &ChannelData, &Soil, &Total, &HydrographInfo,Hydrograph);
+		 SoilMap, Network, &ChannelData, &Soil, &Total, &HydrographInfo,Hydrograph, VType);
 
     IncreaseTime(&Time);
 	t += 1;
@@ -393,7 +393,7 @@ int main(int argc, char **argv)
 
   ExecDump(&Map, &(Time.Current), &(Time.Start), &Options, &Dump, TopoMap,
 	   EvapMap, RadiationMap, PrecipMap, SnowMap, MetMap, VegMap, &Veg, SoilMap,
-	   Network, &ChannelData, &Soil, &Total, &HydrographInfo, Hydrograph);
+	   Network, &ChannelData, &Soil, &Total, &HydrographInfo, Hydrograph, VType);
 
 #ifndef SNOW_ONLY
   FinalMassBalance(&(Dump.FinalBalance), &Total, &Mass);
