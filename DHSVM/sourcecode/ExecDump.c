@@ -1179,9 +1179,9 @@ void DumpPix(DATE *Current, int first, FILES *OutFile, EVAPPIX *Evap,
         if (TotNumTile > 0)
             fprintf(OutFile->FilePtr, " FORfrac NFfrac SFfrac EXPfrac ");
     if (TotNumTile > 0)
-        fprintf(OutFile->FilePtr, "forAlb nfAlb sfAlb expAlb ");
+        fprintf(OutFile->FilePtr, "nfAlb sfAlb expAlb forAlb ");
     if (TotNumTile > 0)
-        fprintf(OutFile->FilePtr, "forTSrf nfTSrf sfTSrf expTSrf ");
+        fprintf(OutFile->FilePtr, "nfTSrf sfTSrf expTSrf forTSrf ");
     fprintf(OutFile->FilePtr, "\n");
   }
 
