@@ -170,7 +170,7 @@ enum KEYS {
   wilting_point, bulk_density, vertical_ks, solids_thermal, thermal_capacity,
   /* Vegetation information */
   veg_description = 0, overstory, understory, fraction, fractionNF, fractionSF, hemifraction, trunk_space,
-  aerodynamic_att, beam_attn, diff_attn, diff_attnNF, diff_attnSF, clumping_factor, leaf_angle_a, leaf_angle_b,
+  aerodynamic_att, beam_attn, diff_attn, diff_attnNF, diff_attnSF, diff_attnNFb, clumping_factor, leaf_angle_a, leaf_angle_b,
   scat, snow_int_cap, mass_drip_ratio, snow_int_eff, imperv_frac, detention_frac,
   detention_decay, height, max_resistance, min_resistance, moisture_threshold, vpd, rpc,
   number_of_root_zones, root_zone_depth, overstory_fraction, understory_fraction,
