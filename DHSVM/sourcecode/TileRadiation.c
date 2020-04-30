@@ -126,8 +126,6 @@ void TileShortRadiation(VEGTABLE *VType, TileStruct *Tile, OPTIONSTRUCT *Options
                            direct and diffuse radiation, respectively */
   float TaudNF, TaudSF;     /* Diffused transmittance for north facing and south
                                south-facing edges*/
-  float TaubNF;				/* Transmission coeffecient for the north-facing edge*/
-  float TaubNFMult;		    /* Transmission coeffecient multiplier relating tau to taubnf*/
 
   unsigned char UnderStory;
   unsigned char OverStory;
@@ -138,7 +136,6 @@ void TileShortRadiation(VEGTABLE *VType, TileStruct *Tile, OPTIONSTRUCT *Options
   Taud   = VType->Taud;
   TaudNF = VType->TaudNF;
   TaudSF = VType->TaudSF;
-  TaubNFMult = VType->TaubNFMult;
 
   F = VType->Fract[0];
   h = VType->Height[0];
@@ -195,14 +192,10 @@ void TileShortRadiation(VEGTABLE *VType, TileStruct *Tile, OPTIONSTRUCT *Options
 
   /* North Facing Shortwave Radiation */
   if (Tile->NorthFacingInt == TRUE) {
-    TaubNF=Tau+(Tau*TaubNFMult);
-    if (TaubNF > 1) {
-		TaubNF=1;
-	}
 	Tile->NetShort[0] = Rs * F * ((1-Albedo[0])-Tau*(1-Albedo[1]));          /* Overstory = 0 */
 
     if (Options->ImprovRadiation == TRUE) {
-	  Tile->NetShort[1] = (1-Albedo[1])*(Rs*(1-F) + F*(Rsb*TaubNF + Rsd*TaudNF)); /* Understory = 1 */
+	  Tile->NetShort[1] = (1-Albedo[1])*(Rs*(1-F) + F*(Rsb*Tau + Rsd*TaudNF)); /* Understory = 1 */
     }
     else {
       Tile->NetShort[1] = Rs * (1-Albedo[1]) * ((1-F)+(Tau*F));

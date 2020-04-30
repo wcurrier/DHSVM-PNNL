@@ -613,9 +613,6 @@ typedef struct {
   float Taud;			/* Transmission of Diffuse radiation through canopy */
 						/* a function of the following two parameters and
 						effective LAI (which can change monthly) */
-  float TaubNFMult;     /* Transmission multiplier for direct beam radiation to the
-						   north facing edge. How much more direct radiation does
-						   the north-facing edge receive than that underneath the canopy*/
   float TaudNF;         /* Transmission of Diffuse radiation through the canopy and
                            to the north-facing fraction of the canopy - Tile Only */
   float TaudSF;			/* Transmission of Diffuse radiation through the canopy and
