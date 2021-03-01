@@ -379,11 +379,11 @@ void CalcCanopyGapAerodynamic(CanopyGapStruct **Gap, int NVegLayers,
 void CalcCanopyGapET(CanopyGapStruct **Gap, int MaxSoilLayer, VEGTABLE *VType,
   VEGPIX *LocalVeg, SOILTABLE *SType, SOILPIX *LocalSoil, PIXMET *LocalMet,
   EVAPPIX *LocalEvap, ROADSTRUCT *LocalNetwork, int Dt, float UpperRa,
-  float LowerRa);
+  float LowerRa, int NFSFboolTmp);
 
 void CalcGapSurroudingET(int Dt, CanopyGapStruct **Gap,
   SOILTABLE *SType, VEGTABLE *VType, PIXRAD *LocalRad, PIXMET *LocalMet,
-  SOILPIX *LocalSoil, ROADSTRUCT *LocalNetwork, float UpperRa, float LowerRa);
+  SOILPIX *LocalSoil, ROADSTRUCT *LocalNetwork, float UpperRa, float LowerRa, int NFSFboolTmp);
 
 void CanopyGapInterception(OPTIONSTRUCT *Options, CanopyGapStruct **Gap,
   int HeatFluxOption, int y, int x, int Dt, int NVegLActual,
@@ -474,7 +474,8 @@ void NoOverStoryET(TileStruct **Tile, int NSoil, VEGTABLE *VType,
 
 void OverStoryET(int Dt, TileStruct **Tile,
   SOILTABLE *SType, VEGTABLE *VType, PIXRAD *LocalRad, PIXMET *LocalMet,
-  SOILPIX *LocalSoil, ROADSTRUCT *LocalNetwork, float UpperRa, float LowerRa);
+  SOILPIX *LocalSoil, ROADSTRUCT *LocalNetwork, float UpperRa, float LowerRa,
+  VEGPIX *LocalVeg);
 
 void AggregateTile(TileStruct **Tile, VEGPIX *LocalVeg,
   SOILPIX *LocalSoil, SNOWPIX *LocalSnow, EVAPPIX *LocalEvap,

@@ -29,11 +29,11 @@ float CanopyResistance(float LAI, float RsMin, float RsMax, float Rpc,
 float Desorption(int Dt, float Moisture, float Porosity, float Ks, 
 			   float Press, float m);
 
-void EvapoTranspiration(int Layer, int impvRad, int Dt, PIXMET *Met,
+void EvapoTranspiration(int Layer, int impvRad, int Dt, float F, PIXMET *Met,
               float NetRad, float Rp, VEGTABLE *VType, SOILTABLE *SType,
               float MoistureFlux, float *Moist, float *Temp, float *Int,
               float *EPot, float *EInt, float **ESoil, float *EAct,
-              float *ETot, float *Adjust, float Ra);
+              float *ETot, float *Adjust, float Ra, int NFSFbool, float TileFrac);
 
 void InitLocalRad(int HeatFluxOption, float Rs, float Ld, float Tair, 
                float Tcanopy, float Tsoil, VEGTABLE *VType, 

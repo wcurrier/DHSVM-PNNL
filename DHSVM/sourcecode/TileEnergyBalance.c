@@ -39,8 +39,6 @@ void CalcNoOverStoryAerodynamic(TileStruct **Tile, int NVegLayers,
   K2 = VON_KARMAN * VON_KARMAN;
 
 
-
-
   /* Exposed */
 
   /* bare soil */
@@ -77,7 +75,6 @@ void CalcNoOverStoryAerodynamic(TileStruct **Tile, int NVegLayers,
     Z0_Lower = Z0_MULTIPLIER * Height[1]; /* Understory Height */
     d_Lower = D0_MULTIPLIER * Height[1];  /* Understory Height */
   }
-
   /* No snow: get wind speed & aerodynamic resistence value */
   (*Tile)[NorthFacing].U[1] =
     log((2.+Z0_Lower)/Z0_Lower) / log((Zref-d_Lower)/Z0_Lower);
@@ -204,11 +201,11 @@ void NoOverStorySnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
     /* adjust the wind and Ra values for gap so they fall between open
     and forested values */
 
-    tmp = VType->USnow*LocalMet->Wind; //forested snow wind
-    SnowWind = tmp + (SnowWind- tmp)*GAPWIND_FACTOR;
+    /* tmp = VType->USnow*LocalMet->Wind; //forested snow wind */
+    /* SnowWind = tmp + (SnowWind- tmp)*GAPWIND_FACTOR; */
 
-    tmp = VType->RaSnow/LocalMet->Wind;
-    SnowRa = tmp - (tmp-SnowRa)*GAPWIND_FACTOR;
+    /* tmp = VType->RaSnow/LocalMet->Wind; */
+    /* SnowRa = tmp - (tmp-SnowRa)*GAPWIND_FACTOR; */
 
     OldTSurf = (*Tile)[NorthFacing].TSurf;
     (*Tile)[NorthFacing].SnowPackOutflow =
@@ -304,11 +301,11 @@ void NoOverStorySnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
     /* adjust the wind and Ra values for gap so they fall betwene open
     and forested values */
 
-    tmp = VType->USnow*LocalMet->Wind; //forested snow wind
-    SnowWind = tmp + (SnowWind- tmp)*GAPWIND_FACTOR;
+    /* tmp = VType->USnow*LocalMet->Wind; //forested snow wind */
+    /* SnowWind = tmp + (SnowWind- tmp)*GAPWIND_FACTOR; */
 
-    tmp = VType->RaSnow/LocalMet->Wind;
-    SnowRa = tmp - (tmp-SnowRa)*GAPWIND_FACTOR;
+    /* tmp = VType->RaSnow/LocalMet->Wind; */
+    /* SnowRa = tmp - (tmp-SnowRa)*GAPWIND_FACTOR; */
 
     OldTSurf = (*Tile)[SouthFacing].TSurf;
     (*Tile)[SouthFacing].SnowPackOutflow =
@@ -506,27 +503,29 @@ void NoOverStoryET(TileStruct **Tile, int NSoil, VEGTABLE *VType,
   /********************** for NorthFacing **********************/
 
   if ((*Tile)[NorthFacing].HasSnow != TRUE && VType->UnderStory == TRUE) {
+
     Rp = VISFRACT * (*Tile)[NorthFacing].NetShort[1];
     NetRadiation =
       (*Tile)[NorthFacing].NetShort[1] +
       (*Tile)[NorthFacing].LongIn[1] - (*Tile)[NorthFacing].LongOut[1];
 
-    EvapoTranspiration(1, 1, Dt, LocalMet, NetRadiation,
+    EvapoTranspiration(1, 1, Dt, 1, LocalMet, NetRadiation,
       Rp, VType, SType, (*Tile)[NorthFacing].MoistureFlux, (*Tile)[NorthFacing].Moist,
-      LocalSoil->Temp, &((*Tile)[NorthFacing].IntRain[0]),
+      LocalSoil->Temp, &((*Tile)[NorthFacing].IntRain[1]),
       (*Tile)[NorthFacing].EPot, (*Tile)[NorthFacing].EInt, (*Tile)[NorthFacing].ESoil,
-      (*Tile)[NorthFacing].EAct, &((*Tile)[NorthFacing].ETot), LocalNetwork->Adjust, LowerRa);
+      (*Tile)[NorthFacing].EAct, &((*Tile)[NorthFacing].ETot), LocalNetwork->Adjust, LowerRa,
+	  (*Tile)[NorthFacing].NorthFacingInt,LocalVeg->NFfrac);
 
     (*Tile)[NorthFacing].MoistureFlux += (*Tile)[NorthFacing].EAct[1] + (*Tile)[NorthFacing].EInt[1];
 
-    (*Tile)[NorthFacing].NetRadiation[1] = NetRadiation;
     (*Tile)[NorthFacing].NetRadiation[0] = 0.;
+    (*Tile)[NorthFacing].NetRadiation[1] = NetRadiation;
   }
   else if (VType->UnderStory == TRUE) {
     (*Tile)[NorthFacing].EAct[1] = 0.;
     (*Tile)[NorthFacing].EInt[1] = 0.;
-    (*Tile)[NorthFacing].NetRadiation[0] = 0.;
     (*Tile)[NorthFacing].NetRadiation[1] = 0.;
+    (*Tile)[NorthFacing].NetRadiation[0] = 0.;
   }
 
   /* Calculate soil evaporation from the upper soil layer if no snow is
@@ -539,10 +538,10 @@ void NoOverStoryET(TileStruct **Tile, int NSoil, VEGTABLE *VType,
     (*Tile)[NorthFacing].EvapSoil =
     SoilEvaporation(Dt, LocalMet->Tair, LocalMet->Slope, LocalMet->Gamma,
         LocalMet->Lv, LocalMet->AirDens, LocalMet->Vpd,
-        NetRadiation, UpperRa, (*Tile)[NorthFacing].MoistureFlux, SType->Porosity[0],
-        SType->FCap[0], SType->Ks[0], SType->Press[0], SType->PoreDist[0],
-        VType->RootDepth[0], &((*Tile)[NorthFacing].Moist[0]),
-        LocalNetwork->Adjust[0]);
+        NetRadiation, UpperRa, (*Tile)[NorthFacing].MoistureFlux, SType->Porosity[1],
+        SType->FCap[1], SType->Ks[1], SType->Press[1], SType->PoreDist[1],
+        VType->RootDepth[1], &((*Tile)[NorthFacing].Moist[1]),
+        LocalNetwork->Adjust[1]);
   }
   else
     (*Tile)[NorthFacing].EvapSoil = 0.0;
@@ -559,11 +558,12 @@ void NoOverStoryET(TileStruct **Tile, int NSoil, VEGTABLE *VType,
       (*Tile)[SouthFacing].NetShort[1] +
       (*Tile)[SouthFacing].LongIn[1] - (*Tile)[SouthFacing].LongOut[1];
 
-    EvapoTranspiration(1, 1, Dt, LocalMet, NetRadiation,
+    EvapoTranspiration(1, 1, Dt, 1, LocalMet, NetRadiation,
       Rp, VType, SType, (*Tile)[SouthFacing].MoistureFlux, (*Tile)[SouthFacing].Moist,
-      LocalSoil->Temp, &((*Tile)[SouthFacing].IntRain[0]),
+      LocalSoil->Temp, &((*Tile)[SouthFacing].IntRain[1]),
       (*Tile)[SouthFacing].EPot, (*Tile)[SouthFacing].EInt, (*Tile)[SouthFacing].ESoil,
-      (*Tile)[SouthFacing].EAct, &((*Tile)[SouthFacing].ETot), LocalNetwork->Adjust, LowerRa);
+      (*Tile)[SouthFacing].EAct, &((*Tile)[SouthFacing].ETot), LocalNetwork->Adjust, LowerRa,
+      (*Tile)[SouthFacing].SouthFacingInt,LocalVeg->SFfrac);
 
     (*Tile)[SouthFacing].MoistureFlux += (*Tile)[SouthFacing].EAct[1] + (*Tile)[SouthFacing].EInt[1];
 
@@ -573,8 +573,8 @@ void NoOverStoryET(TileStruct **Tile, int NSoil, VEGTABLE *VType,
   else if (VType->UnderStory == TRUE) {
     (*Tile)[SouthFacing].EAct[1] = 0.;
     (*Tile)[SouthFacing].EInt[1] = 0.;
-    (*Tile)[SouthFacing].NetRadiation[0] = 0.;
     (*Tile)[SouthFacing].NetRadiation[1] = 0.;
+    (*Tile)[SouthFacing].NetRadiation[0] = 0.;
   }
 
   /* Calculate soil evaporation from the upper soil layer if no snow is
@@ -587,10 +587,10 @@ void NoOverStoryET(TileStruct **Tile, int NSoil, VEGTABLE *VType,
     (*Tile)[SouthFacing].EvapSoil =
     SoilEvaporation(Dt, LocalMet->Tair, LocalMet->Slope, LocalMet->Gamma,
         LocalMet->Lv, LocalMet->AirDens, LocalMet->Vpd,
-        NetRadiation, UpperRa, (*Tile)[SouthFacing].MoistureFlux, SType->Porosity[0],
-        SType->FCap[0], SType->Ks[0], SType->Press[0], SType->PoreDist[0],
-        VType->RootDepth[0], &((*Tile)[SouthFacing].Moist[0]),
-        LocalNetwork->Adjust[0]);
+        NetRadiation, UpperRa, (*Tile)[SouthFacing].MoistureFlux, SType->Porosity[1],
+        SType->FCap[1], SType->Ks[1], SType->Press[1], SType->PoreDist[1],
+        VType->RootDepth[1], &((*Tile)[SouthFacing].Moist[1]),
+        LocalNetwork->Adjust[1]);
   }
   else
     (*Tile)[SouthFacing].EvapSoil = 0.0;
@@ -608,11 +608,12 @@ void NoOverStoryET(TileStruct **Tile, int NSoil, VEGTABLE *VType,
       (*Tile)[Exposed].NetShort[1] +
       (*Tile)[Exposed].LongIn[1] - (*Tile)[Exposed].LongOut[1];
 
-    EvapoTranspiration(1, 1, Dt, LocalMet, NetRadiation,
+    EvapoTranspiration(1, 1, Dt, 1, LocalMet, NetRadiation,
       Rp, VType, SType, (*Tile)[Exposed].MoistureFlux, (*Tile)[Exposed].Moist,
-      LocalSoil->Temp, &((*Tile)[Exposed].IntRain[0]),
+      LocalSoil->Temp, &((*Tile)[Exposed].IntRain[1]),
       (*Tile)[Exposed].EPot, (*Tile)[Exposed].EInt, (*Tile)[Exposed].ESoil,
-      (*Tile)[Exposed].EAct, &((*Tile)[Exposed].ETot), LocalNetwork->Adjust, LowerRa);
+      (*Tile)[Exposed].EAct, &((*Tile)[Exposed].ETot), LocalNetwork->Adjust, LowerRa,
+      (*Tile)[Exposed].ExposedInt,LocalVeg->EXPfrac);
 
     (*Tile)[Exposed].MoistureFlux += (*Tile)[Exposed].EAct[1] + (*Tile)[Exposed].EInt[1];
 
@@ -622,8 +623,8 @@ void NoOverStoryET(TileStruct **Tile, int NSoil, VEGTABLE *VType,
   else if (VType->UnderStory == TRUE) {
     (*Tile)[Exposed].EAct[1] = 0.;
     (*Tile)[Exposed].EInt[1] = 0.;
-    (*Tile)[Exposed].NetRadiation[0] = 0.;
     (*Tile)[Exposed].NetRadiation[1] = 0.;
+    (*Tile)[Exposed].NetRadiation[0] = 0.;
   }
 
   /* Calculate soil evaporation from the upper soil layer if no snow is
@@ -636,10 +637,10 @@ void NoOverStoryET(TileStruct **Tile, int NSoil, VEGTABLE *VType,
     (*Tile)[Exposed].EvapSoil =
     SoilEvaporation(Dt, LocalMet->Tair, LocalMet->Slope, LocalMet->Gamma,
         LocalMet->Lv, LocalMet->AirDens, LocalMet->Vpd,
-        NetRadiation, UpperRa, (*Tile)[Exposed].MoistureFlux, SType->Porosity[0],
-        SType->FCap[0], SType->Ks[0], SType->Press[0], SType->PoreDist[0],
-        VType->RootDepth[0], &((*Tile)[Exposed].Moist[0]),
-        LocalNetwork->Adjust[0]);
+        NetRadiation, UpperRa, (*Tile)[Exposed].MoistureFlux, SType->Porosity[1],
+        SType->FCap[1], SType->Ks[1], SType->Press[1], SType->PoreDist[1],
+        VType->RootDepth[1], &((*Tile)[Exposed].Moist[1]),
+        LocalNetwork->Adjust[1]);
   }
   else
     (*Tile)[Exposed].EvapSoil = 0.0;
@@ -748,7 +749,7 @@ Purpose      :
 *****************************************************************************/
 void OverStoryET(int Dt, TileStruct **Tile,
   SOILTABLE *SType, VEGTABLE *VType, PIXRAD *LocalRad, PIXMET *LocalMet,
-  SOILPIX *LocalSoil, ROADSTRUCT *LocalNetwork, float UpperRa, float LowerRa)
+  SOILPIX *LocalSoil, ROADSTRUCT *LocalNetwork, float UpperRa, float LowerRa, VEGPIX *LocalVeg)
 {
   float Rp;
   float NetRadiation;
@@ -759,10 +760,11 @@ void OverStoryET(int Dt, TileStruct **Tile,
       (*Tile)[ForestTile].LongIn[0] - 2 * VType->Vf *(*Tile)[ForestTile].LongOut[0];
     (*Tile)[ForestTile].NetRadiation[0] = NetRadiation;
 
-    EvapoTranspiration(0, 1, Dt, LocalMet, NetRadiation,
+    EvapoTranspiration(0, 1, Dt, VType->Fract[0], LocalMet, NetRadiation,
       Rp, VType, SType, (*Tile)[ForestTile].MoistureFlux, (*Tile)[ForestTile].Moist, LocalSoil->Temp,
       &((*Tile)[ForestTile].IntRain[0]), (*Tile)[ForestTile].EPot, (*Tile)[ForestTile].EInt, (*Tile)[ForestTile].ESoil,
-      (*Tile)[ForestTile].EAct, &((*Tile)[ForestTile].ETot), LocalNetwork->Adjust, UpperRa);
+      (*Tile)[ForestTile].EAct, &((*Tile)[ForestTile].ETot), LocalNetwork->Adjust, UpperRa,
+      (*Tile)[ForestTile].ForestInt,LocalVeg->FORfrac);
     (*Tile)[ForestTile].MoistureFlux += (*Tile)[ForestTile].EAct[0] + (*Tile)[ForestTile].EInt[0];
 
     if ((*Tile)[ForestTile].HasSnow != TRUE && VType->UnderStory == TRUE) {
@@ -771,10 +773,11 @@ void OverStoryET(int Dt, TileStruct **Tile,
         LocalRad->NetShort[1] +
         LocalRad->LongIn[1] - VType->Fract[1] * LocalRad->LongOut[1];
       LocalRad->NetRadiation[1] = NetRadiation;
-      EvapoTranspiration(1, 1, Dt, LocalMet, NetRadiation,
+      EvapoTranspiration(1, 1, Dt, VType->Fract[1], LocalMet, NetRadiation,
         Rp, VType, SType, (*Tile)[ForestTile].MoistureFlux, (*Tile)[ForestTile].Moist, LocalSoil->Temp,
         &((*Tile)[ForestTile].IntRain[1]), (*Tile)[ForestTile].EPot, (*Tile)[ForestTile].EInt, (*Tile)[ForestTile].ESoil,
-        (*Tile)[ForestTile].EAct, &((*Tile)[ForestTile].ETot), LocalNetwork->Adjust, LowerRa);
+        (*Tile)[ForestTile].EAct, &((*Tile)[ForestTile].ETot), LocalNetwork->Adjust, LowerRa,
+        (*Tile)[ForestTile].ForestInt,LocalVeg->FORfrac);
       (*Tile)[ForestTile].MoistureFlux += (*Tile)[ForestTile].EAct[1] + (*Tile)[ForestTile].EInt[1];
     }
     else if (VType->UnderStory == TRUE) {

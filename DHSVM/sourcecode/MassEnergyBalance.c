@@ -102,6 +102,13 @@ void MassEnergyBalance(OPTIONSTRUCT *Options, int y, int x,
   double Tmp;			    /* Temporary value */
   float Ls;			        /* Latent heat of sublimation (J/kg) */
 
+  /* To make sure original model strucutre runs properly with ET change - Currier 2020*/
+  int NFSFboolTmp;
+  float FRACTinv;
+
+  FRACTinv=1-VType->Fract[1];
+  NFSFboolTmp=FALSE;
+
   /* Edited by Zhuoran Duan zhuoran.duan@pnnl.gov 06/21/2006*/
   /*Add a function to modify soil moisture by add/extract SatFlow from previous time step*/
   DistributeSatflow(Dt, DX, DY, LocalSoil->SatFlow, SType->NLayers,
@@ -144,14 +151,15 @@ void MassEnergyBalance(OPTIONSTRUCT *Options, int y, int x,
     LocalVeg->Tile[NorthFacing].NVegLActual = VType->NVegLayers - 1;
     LocalVeg->Tile[SouthFacing].NVegLActual = VType->NVegLayers - 1;
     LocalVeg->Tile[Exposed].NVegLActual     = VType->NVegLayers - 1;
-    LocalVeg->Tile[ForestTile].NVegLActual  = VType->NVegLayers;
+    /*LocalVeg->Tile[ForestTile].NVegLActual  = VType->NVegLayers; */
 
     if (LocalVeg->Tile[NorthFacing].HasSnow == TRUE && VType->UnderStory == TRUE)
       --LocalVeg->Tile[NorthFacing].NVegLActual;
     if (LocalVeg->Tile[SouthFacing].HasSnow == TRUE && VType->UnderStory == TRUE)
       --LocalVeg->Tile[SouthFacing].NVegLActual;
-     if (LocalVeg->Tile[Exposed].HasSnow == TRUE && VType->UnderStory == TRUE)
+	if (LocalVeg->Tile[Exposed].HasSnow == TRUE && VType->UnderStory == TRUE)
       --LocalVeg->Tile[Exposed].NVegLActual;
+
 
     /* initialize soil moisture */
     for (i = 0; i < TILE_PARTITION; i++) {
@@ -428,6 +436,7 @@ void MassEnergyBalance(OPTIONSTRUCT *Options, int y, int x,
   /* calculate the amount of evapotranspiration from each vegetation layer
      above the ground/soil surface.  Also calculate the total amount of
      evapotranspiration from the vegetation */
+
   if (VType->OverStory == TRUE) {
     Rp = VISFRACT * LocalRad->NetShort[0];
     if (Options->ImprovRadiation)
@@ -437,10 +446,10 @@ void MassEnergyBalance(OPTIONSTRUCT *Options, int y, int x,
       NetRadiation = LocalRad->NetShort[0] +
       LocalRad->LongIn[0] - 2 * VType->Fract[0] * LocalRad->LongOut[0];
     LocalRad->NetRadiation[0] = NetRadiation;
-    EvapoTranspiration(0, Options->ImprovRadiation, Dt, LocalMet, NetRadiation,
+    EvapoTranspiration(0, Options->ImprovRadiation, Dt, VType->Fract[0], LocalMet, NetRadiation,
       Rp, VType, SType, LocalVeg->MoistureFlux, LocalSoil->Moist, LocalSoil->Temp,
       &(LocalPrecip->IntRain[0]), LocalEvap->EPot, LocalEvap->EInt, LocalEvap->ESoil,
-      LocalEvap->EAct, &(LocalEvap->ETot), LocalNetwork->Adjust, UpperRa);
+      LocalEvap->EAct, &(LocalEvap->ETot), LocalNetwork->Adjust, UpperRa, FALSE, VType->Fract[0]);
     LocalVeg->MoistureFlux += LocalEvap->EAct[0] + LocalEvap->EInt[0];
 
     if (LocalSnow->HasSnow != TRUE && VType->UnderStory == TRUE) {
@@ -449,10 +458,10 @@ void MassEnergyBalance(OPTIONSTRUCT *Options, int y, int x,
         LocalRad->NetShort[1] +
         LocalRad->LongIn[1] - VType->Fract[1] * LocalRad->LongOut[1];
       LocalRad->NetRadiation[1] = NetRadiation;
-      EvapoTranspiration(1, Options->ImprovRadiation, Dt, LocalMet, NetRadiation,
+      EvapoTranspiration(1, Options->ImprovRadiation, Dt, VType->Fract[1], LocalMet, NetRadiation,
         Rp, VType, SType, LocalVeg->MoistureFlux, LocalSoil->Moist, LocalSoil->Temp,
         &(LocalPrecip->IntRain[1]), LocalEvap->EPot, LocalEvap->EInt, LocalEvap->ESoil,
-        LocalEvap->EAct, &(LocalEvap->ETot), LocalNetwork->Adjust, LowerRa);
+        LocalEvap->EAct, &(LocalEvap->ETot), LocalNetwork->Adjust, LowerRa, FALSE, VType->Fract[1]);
       LocalVeg->MoistureFlux += LocalEvap->EAct[1] + LocalEvap->EInt[1];
     }
     else if (VType->UnderStory == TRUE) {
@@ -466,10 +475,10 @@ void MassEnergyBalance(OPTIONSTRUCT *Options, int y, int x,
     NetRadiation =
       LocalRad->NetShort[0] +
       LocalRad->LongIn[0] - VType->Fract[0] * LocalRad->LongOut[0];
-    EvapoTranspiration(0, Options->ImprovRadiation, Dt, LocalMet, NetRadiation,
+    EvapoTranspiration(0, Options->ImprovRadiation, Dt,  VType->Fract[0], LocalMet, NetRadiation,
       Rp, VType, SType, LocalVeg->MoistureFlux, LocalSoil->Moist, LocalSoil->Temp,
       &(LocalPrecip->IntRain[0]), LocalEvap->EPot, LocalEvap->EInt, LocalEvap->ESoil,
-      LocalEvap->EAct, &(LocalEvap->ETot), LocalNetwork->Adjust, LowerRa);
+      LocalEvap->EAct, &(LocalEvap->ETot), LocalNetwork->Adjust, LowerRa, NFSFboolTmp, VType->Fract[1]);
     LocalVeg->MoistureFlux += LocalEvap->EAct[0] + LocalEvap->EInt[0];
     LocalRad->NetRadiation[0] = NetRadiation;
     LocalRad->NetRadiation[1] = 0.;
@@ -511,24 +520,25 @@ void MassEnergyBalance(OPTIONSTRUCT *Options, int y, int x,
   /* with canopy gaps */
   if (LocalVeg->Gapping > 0.0) {
     CalcGapSurroudingET(Dt, &(LocalVeg->Type), SType, VType, LocalRad, LocalMet,
-      LocalSoil, LocalNetwork, UpperRa, LowerRa);
+      LocalSoil, LocalNetwork, UpperRa, LowerRa, NFSFboolTmp);
 
     /* update wind and aero resistance for gap opening */
     LowerWind = LocalVeg->Type[Opening].U[1] * LocalMet->Wind;
     LowerRa = LocalVeg->Type[Opening].Ra[1] / LocalMet->Wind;
 
     CalcCanopyGapET(&(LocalVeg->Type), MaxSoilLayers, VType, LocalVeg, SType,
-      LocalSoil, LocalMet, LocalEvap, LocalNetwork, Dt, UpperRa, LowerRa);
+      LocalSoil, LocalMet, LocalEvap, LocalNetwork, Dt, UpperRa, LowerRa, NFSFboolTmp);
 
   }
 
   if (LocalVeg->FORfrac > 0.0) {
+	NFSFboolTmp=TRUE;
     OverStoryET(Dt, &(LocalVeg->Tile), SType, VType, LocalRad, LocalMet,
-      LocalSoil, LocalNetwork, UpperRa, LowerRa);
+      LocalSoil, LocalNetwork, UpperRa, LowerRa, LocalVeg);
 
     /* update wind and aero resistance for gap opening */
-    LowerWind = LocalVeg->Tile[Exposed].U[1] * LocalMet->Wind;
-    LowerRa = LocalVeg->Tile[Exposed].Ra[1] / LocalMet->Wind;
+    LowerWind = LocalVeg->Tile[Exposed].U[1] * LocalMet->Wind; /* using understory wind [1] */
+    LowerRa = LocalVeg->Tile[Exposed].Ra[1] / LocalMet->Wind;  /* using understroy wind [1] */
 
     NoOverStoryET(&(LocalVeg->Tile), MaxSoilLayers, VType, LocalVeg, SType,
       LocalSoil, LocalMet, LocalEvap, LocalNetwork, Dt, UpperRa, LowerRa);

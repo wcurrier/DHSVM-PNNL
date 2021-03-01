@@ -27,18 +27,18 @@
 /*****************************************************************************
 EvapoTranspiration()
 *****************************************************************************/
-void EvapoTranspiration(int Layer, int ImpvRad, int Dt, PIXMET *Met,
+void EvapoTranspiration(int Layer, int ImpvRad, int Dt, float F, PIXMET *Met,
   float NetRad, float Rp, VEGTABLE *VType, SOILTABLE *SType,
   float MoistureFlux, float *Moist, float *SoilTemp, float *Int,
   float *EPot, float *EInt, float **ESoil, float *EAct, float *ETot,
-  float *Adjust, float Ra)
+  float *Adjust, float Ra, int NFSFbool, float TileFrac)
 {
   float *Rc;			/* canopy resistance associated with
                         conditions in each soil layer (s/m) */
   float DryArea;		/* relative dry leaf area  */
   float DryEvapTime;	/* amount of time remaining during a timestep
                         after the interception storage is depleted (sec) */
-  float F;			    /* Fractional coverage by vegetation layer */
+  float Ftile;			    /* Fractional coverage by vegetation layer */
   float SoilMoisture;	/* Amount of water in each soil layer (m) */
   float WetArea;		/* relative leaf area wetted by interception storage */
   float WetEvapRate;	/* evaporation rate from wetted fraction per unit ground area (m/s) */
@@ -46,9 +46,13 @@ void EvapoTranspiration(int Layer, int ImpvRad, int Dt, PIXMET *Met,
                         in interception storage (sec) */
   int i;			    /* counter */
 
+  /* F = VType->Fract[Layer]; */
+  // if (NFSFbool == TRUE) {Ftile = TileFrac;}
+  //  if (F > 0) {
 
-  F = VType->Fract[Layer];
   NetRad /= F;
+
+  /* printf("F  in ET is: %f \n",F); */
 
   /* Convert the water amounts related to partial canopy cover to a pixel depth
   as if the entire pixel is covered. These depths will be converted back later on. */
@@ -180,5 +184,10 @@ void EvapoTranspiration(int Layer, int ImpvRad, int Dt, PIXMET *Met,
 
   /* clean up */
   free(Rc);
+//  }
+//  else {
+//  /* printf("Fractional Area is  %f \n",F); */
+//  }
+
 }
 

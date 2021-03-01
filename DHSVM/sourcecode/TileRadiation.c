@@ -192,7 +192,8 @@ void TileShortRadiation(VEGTABLE *VType, TileStruct *Tile, OPTIONSTRUCT *Options
 
   /* North Facing Shortwave Radiation */
   if (Tile->NorthFacingInt == TRUE) {
-	Tile->NetShort[0] = Rs * F * ((1-Albedo[0])-Tau*(1-Albedo[1]));          /* Overstory = 0 */
+	// Tile->NetShort[0] = Rs * F * ((1-Albedo[0])-Tau*(1-Albedo[1]));          /* Overstory = 0 */
+	Tile->NetShort[0] = 0.;          /* Overstory = 0 */
 
     if (Options->ImprovRadiation == TRUE) {
 	  Tile->NetShort[1] = (1-Albedo[1])*(Rs*(1-F) + F*(Rsb*Tau + Rsd*TaudNF)); /* Understory = 1 */
@@ -270,9 +271,11 @@ void TileLongRadiation(VEGTABLE *VType,TileStruct *Tile, OPTIONSTRUCT *Options,
       Tile->LongOut[1] = STEFAN * (Tmp * Tmp * Tmp * Tmp); /* Understory = 1  */
       Tmp = Tcanopy + 273.15;
       Tile->LongOut[0] = STEFAN * (Tmp * Tmp * Tmp * Tmp); /* Overstory = 0 */
+	  // Tile->LongOut[0] = 0.;
 
       Tile->LongIn[1] = Ld * (1-Fnf) + Tile->LongOut[0] * Fnf; /* Understory = 1 - could use some work  */
-      Tile->LongIn[0] = (Ld + Tile->LongOut[1]) * Fnf;       /* Overstory = 0 */
+      // Tile->LongIn[0] = (Ld + Tile->LongOut[1]) * Fnf;       /* Overstory = 0 */
+	  Tile->LongIn[0] = 0.;
   }
   /* South Facing Longwave Radiation */
   if (Tile->SouthFacingInt == TRUE) {
@@ -280,10 +283,11 @@ void TileLongRadiation(VEGTABLE *VType,TileStruct *Tile, OPTIONSTRUCT *Options,
     Tile->LongOut[1] = STEFAN * (Tmp * Tmp * Tmp * Tmp); /* Understory = 1  */
     Tmp = Tcanopy + 273.15;
     Tile->LongOut[0] = STEFAN * (Tmp * Tmp * Tmp * Tmp); /* Overstory = 0 */
-
+	// Tile->LongOut[0] = 0.;
 
     Tile->LongIn[1] = Ld * (1-Fsf) + Tile->LongOut[0] * Fsf; /* Understory = 1 - could use some work  */
-    Tile->LongIn[0] = (Ld + Tile->LongOut[1]) * Fsf;       /* Overstory = 0 */
+    // Tile->LongIn[0] = (Ld + Tile->LongOut[1]) * Fsf;       /* Overstory = 0 */
+	Tile->LongIn[0] = 0.;
   }
   /* Exposed Longwave Radiation */
   if (Tile->ExposedInt == TRUE) {
