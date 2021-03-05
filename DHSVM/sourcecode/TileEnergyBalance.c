@@ -185,7 +185,9 @@ void NoOverStorySnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
   float tmp;                /* temporary variable */
   float Tmp;                /* temporary variable */
   float Ls;			        /* Latent heat of sublimation (J/kg) */
+  float GAPWIND_FACTOR_Tile; /* Local GAPWIND Factor [-] */
 
+  GAPWIND_FACTOR_Tile = 1 - LocalVeg->FORfrac;
 
   /********************* calculate NorthFacing snow melt *********************/
 
@@ -195,17 +197,30 @@ void NoOverStorySnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
     SnowLongIn = (*Tile)[NorthFacing].LongIn[1];
     SnowNetShort = (*Tile)[NorthFacing].NetShort[1];
 
-    SnowWind = (*Tile)[NorthFacing].USnow * LocalMet->Wind;
+//	printf("(*Tile)[NorthFacing].USnow %f \n", (*Tile)[NorthFacing].USnow);
+//	printf("(*Tile)[SouthFacing].USnow %f \n", (*Tile)[SouthFacing].USnow);
+//	printf("(*Tile)[Exposed].USnow %f \n", (*Tile)[Exposed].USnow);
+//	printf("VType->USnow %f \n", VType->USnow);
+//	printf("VType->USnow %f \n", VType->USnow);
+
+
+	SnowWind = (*Tile)[NorthFacing].USnow * LocalMet->Wind;
     SnowRa = (*Tile)[NorthFacing].RaSnow / LocalMet->Wind;
+
+//	printf("North Facing SnowWind Before Correction: %f \n", SnowWind);
+//	printf("North Facing SnowRa Before Correction: %f \n", SnowRa);
 
     /* adjust the wind and Ra values for gap so they fall between open
     and forested values */
 
-    /* tmp = VType->USnow*LocalMet->Wind; //forested snow wind */
-    /* SnowWind = tmp + (SnowWind- tmp)*GAPWIND_FACTOR; */
+    tmp = VType->USnow*LocalMet->Wind; //forested snow wind
+	SnowWind = tmp + (SnowWind- tmp)*GAPWIND_FACTOR_Tile;
 
-    /* tmp = VType->RaSnow/LocalMet->Wind; */
-    /* SnowRa = tmp - (tmp-SnowRa)*GAPWIND_FACTOR; */
+	tmp = VType->RaSnow/LocalMet->Wind;
+    SnowRa = tmp - (tmp-SnowRa)*GAPWIND_FACTOR_Tile;
+
+//	printf("Exposed Facing SnowWind Before Correction After GapWind: %f \n", SnowWind);
+//	printf("Exposed Facing SnowRa Before Correction After GapWind: %f \n", SnowRa);
 
     OldTSurf = (*Tile)[NorthFacing].TSurf;
     (*Tile)[NorthFacing].SnowPackOutflow =
@@ -226,6 +241,8 @@ void NoOverStorySnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
       SnowRa /= StabilityCorrection(2.0f, 0.f, Tmean, LocalMet->Tair, SnowWind, Z0_SNOW);
     else
       SnowRa = DHSVM_HUGE;
+
+//	printf("North Facing SnowRa After Correction: %f \n", SnowRa);
 
     /* convert snow surface temperature from C to K */
     Tmp = Tmean + 273.15;
@@ -298,14 +315,20 @@ void NoOverStorySnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
     SnowWind = (*Tile)[SouthFacing].USnow * LocalMet->Wind;
     SnowRa = (*Tile)[SouthFacing].RaSnow / LocalMet->Wind;
 
+//	printf("South Facing SnowWind Before Correction: %f \n", SnowWind);
+//	printf("South Facing SnowRa Before Correction: %f \n", SnowRa);
+
     /* adjust the wind and Ra values for gap so they fall betwene open
     and forested values */
 
-    /* tmp = VType->USnow*LocalMet->Wind; //forested snow wind */
-    /* SnowWind = tmp + (SnowWind- tmp)*GAPWIND_FACTOR; */
+    tmp = VType->USnow*LocalMet->Wind; //forested snow wind
+    SnowWind = tmp + (SnowWind- tmp)*GAPWIND_FACTOR_Tile;
 
-    /* tmp = VType->RaSnow/LocalMet->Wind; */
-    /* SnowRa = tmp - (tmp-SnowRa)*GAPWIND_FACTOR; */
+    tmp = VType->RaSnow/LocalMet->Wind;
+    SnowRa = tmp - (tmp-SnowRa)*GAPWIND_FACTOR_Tile;
+
+//	printf("Exposed Facing SnowWind Before Correction After GapWind: %f \n", SnowWind);
+//	printf("Exposed Facing SnowRa Before Correction After GapWind: %f \n", SnowRa);
 
     OldTSurf = (*Tile)[SouthFacing].TSurf;
     (*Tile)[SouthFacing].SnowPackOutflow =
@@ -326,6 +349,8 @@ void NoOverStorySnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
       SnowRa /= StabilityCorrection(2.0f, 0.f, Tmean, LocalMet->Tair, SnowWind, Z0_SNOW);
     else
       SnowRa = DHSVM_HUGE;
+
+//	printf("South Facing SnowRa After Correction: %f \n", SnowRa);
 
     /* convert snow surface temperature from C to K */
     Tmp = Tmean + 273.15;
@@ -398,14 +423,20 @@ void NoOverStorySnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
     SnowWind = (*Tile)[Exposed].USnow * LocalMet->Wind;
     SnowRa = (*Tile)[Exposed].RaSnow / LocalMet->Wind;
 
+//	printf("Exposed Facing SnowWind Before Correction: %f \n", SnowWind);
+//	printf("Exposed Facing SnowRa Before Correction: %f \n", SnowRa);
+
     /* adjust the wind and Ra values for gap so they fall betwene open
     and forested values */
 
-    /*tmp = VType->USnow*LocalMet->Wind; //forested snow wind
-    SnowWind = tmp + (SnowWind- tmp)*GAPWIND_FACTOR;
+    tmp = VType->USnow*LocalMet->Wind; //forested snow wind
+    SnowWind = tmp + (SnowWind- tmp)*GAPWIND_FACTOR_Tile;
 
     tmp = VType->RaSnow/LocalMet->Wind;
-    SnowRa = tmp - (tmp-SnowRa)*GAPWIND_FACTOR; */
+    SnowRa = tmp - (tmp-SnowRa)*GAPWIND_FACTOR_Tile;
+
+//	printf("Exposed Facing SnowWind Before Correction After GapWind: %f \n", SnowWind);
+//	printf("Exposed Facing SnowRa Before Correction After GapWind: %f \n", SnowRa);
 
     OldTSurf = (*Tile)[Exposed].TSurf;
     (*Tile)[Exposed].SnowPackOutflow =
@@ -426,6 +457,8 @@ void NoOverStorySnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
       SnowRa /= StabilityCorrection(2.0f, 0.f, Tmean, LocalMet->Tair, SnowWind, Z0_SNOW);
     else
       SnowRa = DHSVM_HUGE;
+
+//	printf("Exposed Facing SnowRa After Correction: %f \n", SnowRa);
 
     /* convert snow surface temperature from C to K */
     Tmp = Tmean + 273.15;

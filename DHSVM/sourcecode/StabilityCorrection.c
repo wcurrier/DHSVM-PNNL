@@ -68,9 +68,14 @@ float StabilityCorrection(float Z, float d, float TSurf, float Tair,
     if (Ri > RiLimit)
       Ri = RiLimit;
 
-    if (Ri > 0.0)
+    if (Ri > 0.0){
       Correction = (1 - Ri / RiCr) * (1 - Ri / RiCr);
-
+      if (Ri == RiCr){
+      printf("STABLE STABLE CORRECTION: %f \n", Correction);
+      printf("STABLE STABLE Ri: %f \n", Ri);
+      printf("STABLE STABLE RiLimit: %f \n", RiLimit);
+	  }
+	  }
     else {
       if (Ri < -0.5)
 	Ri = -0.5;
