@@ -150,6 +150,9 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 		  Total->Veg.Tile[NorthFacing].NetShort[1] += VegMap[y][x].Tile[NorthFacing].NetShort[1];
 		  Total->Veg.Tile[NorthFacing].Albedo    += VegMap[y][x].Tile[NorthFacing].Albedo;
 		  Total->Veg.Tile[NorthFacing].TSurf     += VegMap[y][x].Tile[NorthFacing].TSurf;
+		  Total->Veg.Tile[NorthFacing].Ra_tile     += VegMap[y][x].Tile[NorthFacing].Ra_tile;
+		  Total->Veg.Tile[NorthFacing].Eact_tile   += VegMap[y][x].Tile[NorthFacing].Eact_tile;
+		  Total->Veg.Tile[NorthFacing].EsSnow_tile += VegMap[y][x].Tile[NorthFacing].EsSnow_tile;
 
           Total->Veg.Tile[SouthFacing].Qsw        += VegMap[y][x].Tile[SouthFacing].Qsw;
 		  Total->Veg.Tile[SouthFacing].Qlin       += VegMap[y][x].Tile[SouthFacing].Qlin;
@@ -164,6 +167,9 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 		  Total->Veg.Tile[SouthFacing].NetShort[1] += VegMap[y][x].Tile[SouthFacing].NetShort[1];
 		  Total->Veg.Tile[SouthFacing].Albedo    += VegMap[y][x].Tile[SouthFacing].Albedo;
 		  Total->Veg.Tile[SouthFacing].TSurf     += VegMap[y][x].Tile[SouthFacing].TSurf;
+		  Total->Veg.Tile[SouthFacing].Ra_tile     += VegMap[y][x].Tile[SouthFacing].Ra_tile;
+		  Total->Veg.Tile[SouthFacing].Eact_tile   += VegMap[y][x].Tile[SouthFacing].Eact_tile;
+		  Total->Veg.Tile[SouthFacing].EsSnow_tile += VegMap[y][x].Tile[SouthFacing].EsSnow_tile;
 
           Total->Veg.Tile[Exposed].Qsw        += VegMap[y][x].Tile[Exposed].Qsw;
 		  Total->Veg.Tile[Exposed].Qlin       += VegMap[y][x].Tile[Exposed].Qlin;
@@ -178,6 +184,9 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 		  Total->Veg.Tile[Exposed].NetShort[1] += VegMap[y][x].Tile[Exposed].NetShort[1];
 		  Total->Veg.Tile[Exposed].Albedo    += VegMap[y][x].Tile[Exposed].Albedo;
 		  Total->Veg.Tile[Exposed].TSurf     += VegMap[y][x].Tile[Exposed].TSurf;
+		  Total->Veg.Tile[Exposed].Ra_tile     += VegMap[y][x].Tile[Exposed].Ra_tile;
+		  Total->Veg.Tile[Exposed].Eact_tile   += VegMap[y][x].Tile[Exposed].Eact_tile;
+		  Total->Veg.Tile[Exposed].EsSnow_tile += VegMap[y][x].Tile[Exposed].EsSnow_tile;
 
           Total->Veg.Tile[ForestTile].Qsw        += VegMap[y][x].Tile[ForestTile].Qsw;
 		  Total->Veg.Tile[ForestTile].Qlin       += VegMap[y][x].Tile[ForestTile].Qlin;
@@ -192,6 +201,9 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 		  Total->Veg.Tile[ForestTile].NetShort[1] += VegMap[y][x].Tile[ForestTile].NetShort[1];
 		  Total->Veg.Tile[ForestTile].Albedo    += VegMap[y][x].Tile[ForestTile].Albedo;
 		  Total->Veg.Tile[ForestTile].TSurf     += VegMap[y][x].Tile[ForestTile].TSurf;
+		  Total->Veg.Tile[ForestTile].Ra_tile     += VegMap[y][x].Tile[ForestTile].Ra_tile;
+		  Total->Veg.Tile[ForestTile].Eact_tile   += VegMap[y][x].Tile[ForestTile].Eact_tile;
+		  Total->Veg.Tile[ForestTile].EsSnow_tile += VegMap[y][x].Tile[ForestTile].EsSnow_tile;
 
 		}
 
@@ -324,6 +336,9 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 	Total->Veg.Tile[NorthFacing].NetShort[1] /= TotNumTile;
 	Total->Veg.Tile[NorthFacing].Albedo /= TotNumTile;
 	Total->Veg.Tile[NorthFacing].TSurf /= TotNumTile;
+	Total->Veg.Tile[NorthFacing].Ra_tile /= TotNumTile;
+	Total->Veg.Tile[NorthFacing].Eact_tile /= TotNumTile;
+	Total->Veg.Tile[NorthFacing].EsSnow_tile /= TotNumTile;
 
 	Total->Veg.Tile[SouthFacing].Qsw /= TotNumTile;
 	Total->Veg.Tile[SouthFacing].Qlin /= TotNumTile;
@@ -338,6 +353,9 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 	Total->Veg.Tile[SouthFacing].NetShort[1] /= TotNumTile;
 	Total->Veg.Tile[SouthFacing].Albedo /= TotNumTile;
 	Total->Veg.Tile[SouthFacing].TSurf /= TotNumTile;
+	Total->Veg.Tile[SouthFacing].Ra_tile /= TotNumTile;
+	Total->Veg.Tile[SouthFacing].Eact_tile /= TotNumTile;
+	Total->Veg.Tile[SouthFacing].EsSnow_tile /= TotNumTile;
 
 	Total->Veg.Tile[Exposed].Qsw /= TotNumTile;
 	Total->Veg.Tile[Exposed].Qlin /= TotNumTile;
@@ -352,6 +370,9 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 	Total->Veg.Tile[Exposed].NetShort[1] /= TotNumTile;
 	Total->Veg.Tile[Exposed].Albedo /= TotNumTile;
 	Total->Veg.Tile[Exposed].TSurf /= TotNumTile;
+	Total->Veg.Tile[Exposed].Ra_tile /= TotNumTile;
+	Total->Veg.Tile[Exposed].Eact_tile /= TotNumTile;
+	Total->Veg.Tile[Exposed].EsSnow_tile /= TotNumTile;
 
     Total->Veg.Tile[ForestTile].Qsw /= TotNumTile;
 	Total->Veg.Tile[ForestTile].Qlin /= TotNumTile;
@@ -366,7 +387,9 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 	Total->Veg.Tile[ForestTile].NetShort[1] /= TotNumTile;
 	Total->Veg.Tile[ForestTile].Albedo /= TotNumTile;
 	Total->Veg.Tile[ForestTile].TSurf /= TotNumTile;
-
+	Total->Veg.Tile[ForestTile].Ra_tile /= TotNumTile;
+	Total->Veg.Tile[ForestTile].Eact_tile /= TotNumTile;
+	Total->Veg.Tile[ForestTile].EsSnow_tile /= TotNumTile;
 
   }
 

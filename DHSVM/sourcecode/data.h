@@ -562,6 +562,9 @@ typedef struct
   float Qs;				        /* Sensible heat exchange */
   float Qe;				        /* Latent heat exchange */
   float Qp;                     /* advected heat from rain input */
+  float Ra_tile;                /* aerodynamic resistance after stability correction s/m-1*/
+  float Eact_tile;              /* Actual vapor pressure of air (Pa) */
+  float EsSnow_tile;            /* saturated vapor pressure in the snow pack */
 } TileStruct;
 
 typedef struct {

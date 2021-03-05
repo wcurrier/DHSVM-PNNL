@@ -242,6 +242,13 @@ void NoOverStorySnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
     else
       SnowRa = DHSVM_HUGE;
 
+	/* Calculate the saturated vapor pressure in the snow pack,
+     (Equation 3.32, Bras 1990) */
+	/* Write this in so they can be written out for model evaluation */
+	(*Tile)[NorthFacing].EsSnow_tile = SatVaporPressure(Tmean);
+    (*Tile)[NorthFacing].Eact_tile   = LocalMet->Eact;
+    (*Tile)[NorthFacing].Ra_tile     = SnowRa;
+
 //	printf("North Facing SnowRa After Correction: %f \n", SnowRa);
 
     /* convert snow surface temperature from C to K */
@@ -350,6 +357,12 @@ void NoOverStorySnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
     else
       SnowRa = DHSVM_HUGE;
 
+	/* Calculate the saturated vapor pressure in the snow pack,
+     (Equation 3.32, Bras 1990) */
+	/* Write this in so they can be written out for model evaluation */
+	(*Tile)[SouthFacing].EsSnow_tile = SatVaporPressure(Tmean);
+    (*Tile)[SouthFacing].Eact_tile   = LocalMet->Eact;
+    (*Tile)[SouthFacing].Ra_tile     = SnowRa;
 //	printf("South Facing SnowRa After Correction: %f \n", SnowRa);
 
     /* convert snow surface temperature from C to K */
@@ -458,6 +471,12 @@ void NoOverStorySnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
     else
       SnowRa = DHSVM_HUGE;
 
+	/* Calculate the saturated vapor pressure in the snow pack,
+     (Equation 3.32, Bras 1990) */
+	/* Write this in so they can be written out for model evaluation */
+	(*Tile)[Exposed].EsSnow_tile = SatVaporPressure(Tmean);
+    (*Tile)[Exposed].Eact_tile   = LocalMet->Eact;
+    (*Tile)[Exposed].Ra_tile     = SnowRa;
 //	printf("Exposed Facing SnowRa After Correction: %f \n", SnowRa);
 
     /* convert snow surface temperature from C to K */
@@ -699,6 +718,9 @@ void OverStoryInterceptSnowMelt(OPTIONSTRUCT *Options, int HeatFluxOption,
   float SnowNetShort;		/* Net amount of short wave radiation at the snow surface (W/m2) */
   float SnowRa;				/* Aerodynamic resistance for snow */
   float SnowWind;		    /* Wind 2 m above snow */
+  float OldTSurf;
+  float Tmean;
+
 
   if (((*Tile)[ForestTile].IntSnow[0] || (*Tile)[ForestTile].SnowFall > 0.0)) {
     SnowInterception(Options, y, x, Dt, VType->Fract[0], VType->Vf,
@@ -739,6 +761,7 @@ void OverStoryInterceptSnowMelt(OPTIONSTRUCT *Options, int HeatFluxOption,
     SnowWind = VType->USnow * LocalMet->Wind;
     SnowRa = VType->RaSnow / LocalMet->Wind;
 
+    OldTSurf = (*Tile)[ForestTile].TSurf;
     (*Tile)[ForestTile].SnowPackOutflow =
       SnowMelt(y, x, Dt, 2.+Z0_SNOW, 0.f, Z0_SNOW, SnowRa, LocalMet->AirDens,
         LocalMet->Eact, LocalMet->Lv, SnowNetShort, SnowLongIn,
@@ -760,6 +783,22 @@ void OverStoryInterceptSnowMelt(OPTIONSTRUCT *Options, int HeatFluxOption,
     TileLongRadiation(VType, &(LocalVeg->Tile[ForestTile]), Options,
                     CanopyRadAttOption, LocalMet->Lin, HeatFluxOption, LocalMet->Tair,
                     LocalVeg->Tcanopy, LocalSoil->TSurf, SType->Albedo);
+
+    /* Calculate the terms of the snow energy balance.  This is similar to the
+    code in SnowPackEnergyBalance.c */
+    Tmean = 0.5 * (OldTSurf + (*Tile)[ForestTile].TSurf);
+
+    /* Apply the stability correction to the aerodynamic resistance */
+    if (SnowWind > 0.0)
+      SnowRa /= StabilityCorrection(2.0f, 0.f, Tmean, LocalMet->Tair, SnowWind, Z0_SNOW);
+    else
+      SnowRa = DHSVM_HUGE;
+
+	/* Write this in so they can be written out for model evaluation */
+	(*Tile)[ForestTile].EsSnow_tile = SatVaporPressure(Tmean);
+    (*Tile)[ForestTile].Eact_tile   = LocalMet->Eact;
+    (*Tile)[ForestTile].Ra_tile     = SnowRa;
+
   }
   else {
     (*Tile)[ForestTile].SnowPackOutflow = 0.0;

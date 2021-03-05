@@ -1167,8 +1167,6 @@ void DumpPix(DATE *Current, int first, FILES *OutFile, EVAPPIX *Evap,
     if (TotNumGap > 0)
       fprintf(OutFile->FilePtr, " Gap.SWE Gap.Qsw Gap.Qlin Gap.Qlw Gap.Qs Gap.Qe Gap.Qp Gap.MeltEnergy ");
     fprintf(OutFile->FilePtr, " Tair ");
-    fprintf(OutFile->FilePtr, " RH ");
-    fprintf(OutFile->FilePtr, " Tair ");
 
     if (Options->Infiltration == DYNAMIC)
       fprintf(OutFile->FilePtr, " InfiltAcc");
@@ -1187,6 +1185,9 @@ void DumpPix(DATE *Current, int first, FILES *OutFile, EVAPPIX *Evap,
         fprintf(OutFile->FilePtr, "nfTSrf sfTSrf expTSrf forTSrf ");
         fprintf(OutFile->FilePtr, "nfVaporMassFlux sfVaporMassFlux expVaporMassFlux forVaporMassFlux ");
         fprintf(OutFile->FilePtr, "nfCanopyVaporMassFlux sfCanopyVaporMassFlux expCanopyVaporMassFlux forCanopyVaporMassFlux ");
+        fprintf(OutFile->FilePtr, "nfEsSnow_tile sfEsSnow_tile expEsSnow_tile forEsSnow_tile ");
+        fprintf(OutFile->FilePtr, "nfRa_tile sfRa_tile expRa_tile forRa_tile ");
+        fprintf(OutFile->FilePtr, "nfEact_tile sfEact_tile expEact_tile forEact_tile ");
 
     fprintf(OutFile->FilePtr, "Snow.VaporMassFlux Snow.CanopyVaporMassFlux ");
     fprintf(OutFile->FilePtr, "Snow.Outflow ");
@@ -1297,6 +1298,12 @@ void DumpPix(DATE *Current, int first, FILES *OutFile, EVAPPIX *Evap,
                                                 Veg->Tile[Exposed].VaporMassFlux, Veg->Tile[ForestTile].VaporMassFlux);
       fprintf(OutFile->FilePtr, " %g %g %g %g", Veg->Tile[NorthFacing].CanopyVaporMassFlux, Veg->Tile[SouthFacing].CanopyVaporMassFlux,
                                                 Veg->Tile[Exposed].CanopyVaporMassFlux, Veg->Tile[ForestTile].CanopyVaporMassFlux);
+      fprintf(OutFile->FilePtr, " %g %g %g %g", Veg->Tile[NorthFacing].EsSnow_tile, Veg->Tile[SouthFacing].EsSnow_tile,
+                                                Veg->Tile[Exposed].EsSnow_tile, Veg->Tile[ForestTile].EsSnow_tile);
+      fprintf(OutFile->FilePtr, " %g %g %g %g", Veg->Tile[NorthFacing].Ra_tile, Veg->Tile[SouthFacing].Ra_tile,
+                                                Veg->Tile[Exposed].Ra_tile, Veg->Tile[ForestTile].Ra_tile);
+      fprintf(OutFile->FilePtr, " %g %g %g %g", Veg->Tile[NorthFacing].Eact_tile, Veg->Tile[SouthFacing].Eact_tile,
+                                                Veg->Tile[Exposed].Eact_tile, Veg->Tile[ForestTile].Eact_tile);
 
   fprintf(OutFile->FilePtr, " %g %g", Snow->VaporMassFlux, Snow->CanopyVaporMassFlux);
   fprintf(OutFile->FilePtr, " %g", Snow->Outflow);
