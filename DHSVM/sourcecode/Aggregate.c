@@ -153,6 +153,9 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 		  Total->Veg.Tile[NorthFacing].Ra_tile     += VegMap[y][x].Tile[NorthFacing].Ra_tile;
 		  Total->Veg.Tile[NorthFacing].Eact_tile   += VegMap[y][x].Tile[NorthFacing].Eact_tile;
 		  Total->Veg.Tile[NorthFacing].EsSnow_tile += VegMap[y][x].Tile[NorthFacing].EsSnow_tile;
+		  Total->Veg.Tile[NorthFacing].USnow_tile      += VegMap[y][x].Tile[NorthFacing].USnow_tile;
+		  Total->Veg.Tile[NorthFacing].Ra_tile_b4corr  += VegMap[y][x].Tile[NorthFacing].Ra_tile_b4corr;
+		  Total->Veg.Tile[NorthFacing].windFromForce   += VegMap[y][x].Tile[NorthFacing].windFromForce;
 
           Total->Veg.Tile[SouthFacing].Qsw        += VegMap[y][x].Tile[SouthFacing].Qsw;
 		  Total->Veg.Tile[SouthFacing].Qlin       += VegMap[y][x].Tile[SouthFacing].Qlin;
@@ -170,6 +173,9 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 		  Total->Veg.Tile[SouthFacing].Ra_tile     += VegMap[y][x].Tile[SouthFacing].Ra_tile;
 		  Total->Veg.Tile[SouthFacing].Eact_tile   += VegMap[y][x].Tile[SouthFacing].Eact_tile;
 		  Total->Veg.Tile[SouthFacing].EsSnow_tile += VegMap[y][x].Tile[SouthFacing].EsSnow_tile;
+		  Total->Veg.Tile[SouthFacing].USnow_tile      += VegMap[y][x].Tile[SouthFacing].USnow_tile;
+		  Total->Veg.Tile[SouthFacing].Ra_tile_b4corr  += VegMap[y][x].Tile[SouthFacing].Ra_tile_b4corr;
+		  Total->Veg.Tile[SouthFacing].windFromForce   += VegMap[y][x].Tile[SouthFacing].windFromForce;
 
           Total->Veg.Tile[Exposed].Qsw        += VegMap[y][x].Tile[Exposed].Qsw;
 		  Total->Veg.Tile[Exposed].Qlin       += VegMap[y][x].Tile[Exposed].Qlin;
@@ -187,6 +193,9 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 		  Total->Veg.Tile[Exposed].Ra_tile     += VegMap[y][x].Tile[Exposed].Ra_tile;
 		  Total->Veg.Tile[Exposed].Eact_tile   += VegMap[y][x].Tile[Exposed].Eact_tile;
 		  Total->Veg.Tile[Exposed].EsSnow_tile += VegMap[y][x].Tile[Exposed].EsSnow_tile;
+		  Total->Veg.Tile[Exposed].USnow_tile      += VegMap[y][x].Tile[Exposed].USnow_tile;
+		  Total->Veg.Tile[Exposed].Ra_tile_b4corr  += VegMap[y][x].Tile[Exposed].Ra_tile_b4corr;
+		  Total->Veg.Tile[Exposed].windFromForce   += VegMap[y][x].Tile[Exposed].windFromForce;
 
           Total->Veg.Tile[ForestTile].Qsw        += VegMap[y][x].Tile[ForestTile].Qsw;
 		  Total->Veg.Tile[ForestTile].Qlin       += VegMap[y][x].Tile[ForestTile].Qlin;
@@ -204,7 +213,9 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 		  Total->Veg.Tile[ForestTile].Ra_tile     += VegMap[y][x].Tile[ForestTile].Ra_tile;
 		  Total->Veg.Tile[ForestTile].Eact_tile   += VegMap[y][x].Tile[ForestTile].Eact_tile;
 		  Total->Veg.Tile[ForestTile].EsSnow_tile += VegMap[y][x].Tile[ForestTile].EsSnow_tile;
-
+		  Total->Veg.Tile[ForestTile].USnow_tile      += VegMap[y][x].Tile[ForestTile].USnow_tile;
+		  Total->Veg.Tile[ForestTile].Ra_tile_b4corr  += VegMap[y][x].Tile[ForestTile].Ra_tile_b4corr;
+		  Total->Veg.Tile[ForestTile].windFromForce   += VegMap[y][x].Tile[ForestTile].windFromForce;
 		}
 
 		/* aggregate soil moisture data */
@@ -339,6 +350,9 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 	Total->Veg.Tile[NorthFacing].Ra_tile /= TotNumTile;
 	Total->Veg.Tile[NorthFacing].Eact_tile /= TotNumTile;
 	Total->Veg.Tile[NorthFacing].EsSnow_tile /= TotNumTile;
+	Total->Veg.Tile[NorthFacing].USnow_tile /= TotNumTile;
+	Total->Veg.Tile[NorthFacing].Ra_tile_b4corr /= TotNumTile;
+	Total->Veg.Tile[NorthFacing].windFromForce /= TotNumTile;
 
 	Total->Veg.Tile[SouthFacing].Qsw /= TotNumTile;
 	Total->Veg.Tile[SouthFacing].Qlin /= TotNumTile;
@@ -356,6 +370,9 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 	Total->Veg.Tile[SouthFacing].Ra_tile /= TotNumTile;
 	Total->Veg.Tile[SouthFacing].Eact_tile /= TotNumTile;
 	Total->Veg.Tile[SouthFacing].EsSnow_tile /= TotNumTile;
+	Total->Veg.Tile[SouthFacing].USnow_tile /= TotNumTile;
+	Total->Veg.Tile[SouthFacing].Ra_tile_b4corr /= TotNumTile;
+	Total->Veg.Tile[SouthFacing].windFromForce /= TotNumTile;
 
 	Total->Veg.Tile[Exposed].Qsw /= TotNumTile;
 	Total->Veg.Tile[Exposed].Qlin /= TotNumTile;
@@ -373,6 +390,9 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 	Total->Veg.Tile[Exposed].Ra_tile /= TotNumTile;
 	Total->Veg.Tile[Exposed].Eact_tile /= TotNumTile;
 	Total->Veg.Tile[Exposed].EsSnow_tile /= TotNumTile;
+	Total->Veg.Tile[Exposed].USnow_tile /= TotNumTile;
+	Total->Veg.Tile[Exposed].Ra_tile_b4corr /= TotNumTile;
+	Total->Veg.Tile[Exposed].windFromForce /= TotNumTile;
 
     Total->Veg.Tile[ForestTile].Qsw /= TotNumTile;
 	Total->Veg.Tile[ForestTile].Qlin /= TotNumTile;
@@ -390,7 +410,9 @@ void Aggregate(MAPSIZE *Map, OPTIONSTRUCT *Options, TOPOPIX **TopoMap,
 	Total->Veg.Tile[ForestTile].Ra_tile /= TotNumTile;
 	Total->Veg.Tile[ForestTile].Eact_tile /= TotNumTile;
 	Total->Veg.Tile[ForestTile].EsSnow_tile /= TotNumTile;
-
+	Total->Veg.Tile[ForestTile].USnow_tile /= TotNumTile;
+	Total->Veg.Tile[ForestTile].Ra_tile_b4corr /= TotNumTile;
+	Total->Veg.Tile[ForestTile].windFromForce /= TotNumTile;
   }
 
   /* average soil moisture data */

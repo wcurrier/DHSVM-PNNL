@@ -207,6 +207,10 @@ void NoOverStorySnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
 	SnowWind = (*Tile)[NorthFacing].USnow * LocalMet->Wind;
     SnowRa = (*Tile)[NorthFacing].RaSnow / LocalMet->Wind;
 
+	(*Tile)[NorthFacing].USnow_tile       = (*Tile)[NorthFacing].USnow;
+    (*Tile)[NorthFacing].Ra_tile_b4corr   = (*Tile)[NorthFacing].RaSnow;
+    (*Tile)[NorthFacing].windFromForce    = LocalMet->Wind;
+
 //	printf("North Facing SnowWind Before Correction: %f \n", SnowWind);
 //	printf("North Facing SnowRa Before Correction: %f \n", SnowRa);
 
@@ -248,6 +252,7 @@ void NoOverStorySnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
 	(*Tile)[NorthFacing].EsSnow_tile = SatVaporPressure(Tmean);
     (*Tile)[NorthFacing].Eact_tile   = LocalMet->Eact;
     (*Tile)[NorthFacing].Ra_tile     = SnowRa;
+
 
 //	printf("North Facing SnowRa After Correction: %f \n", SnowRa);
 
@@ -322,6 +327,9 @@ void NoOverStorySnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
     SnowWind = (*Tile)[SouthFacing].USnow * LocalMet->Wind;
     SnowRa = (*Tile)[SouthFacing].RaSnow / LocalMet->Wind;
 
+	(*Tile)[SouthFacing].USnow_tile       = (*Tile)[SouthFacing].USnow;
+    (*Tile)[SouthFacing].Ra_tile_b4corr   = (*Tile)[SouthFacing].RaSnow;
+    (*Tile)[SouthFacing].windFromForce    = LocalMet->Wind;
 //	printf("South Facing SnowWind Before Correction: %f \n", SnowWind);
 //	printf("South Facing SnowRa Before Correction: %f \n", SnowRa);
 
@@ -435,6 +443,10 @@ void NoOverStorySnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
 
     SnowWind = (*Tile)[Exposed].USnow * LocalMet->Wind;
     SnowRa = (*Tile)[Exposed].RaSnow / LocalMet->Wind;
+
+	(*Tile)[Exposed].USnow_tile       = (*Tile)[Exposed].USnow;
+    (*Tile)[Exposed].Ra_tile_b4corr   = (*Tile)[Exposed].RaSnow;
+    (*Tile)[Exposed].windFromForce    = LocalMet->Wind;
 
 //	printf("Exposed Facing SnowWind Before Correction: %f \n", SnowWind);
 //	printf("Exposed Facing SnowRa Before Correction: %f \n", SnowRa);
@@ -758,8 +770,13 @@ void OverStoryInterceptSnowMelt(OPTIONSTRUCT *Options, int HeatFluxOption,
     SnowNetShort = LocalRad->NetShort[1]; */
     SnowLongIn = (*Tile)[ForestTile].LongIn[1];
     SnowNetShort = (*Tile)[ForestTile].NetShort[1];
+
     SnowWind = VType->USnow * LocalMet->Wind;
     SnowRa = VType->RaSnow / LocalMet->Wind;
+
+	(*Tile)[ForestTile].USnow_tile       = VType->USnow;
+    (*Tile)[ForestTile].Ra_tile_b4corr   = VType->RaSnow;
+    (*Tile)[ForestTile].windFromForce    = LocalMet->Wind;
 
     OldTSurf = (*Tile)[ForestTile].TSurf;
     (*Tile)[ForestTile].SnowPackOutflow =

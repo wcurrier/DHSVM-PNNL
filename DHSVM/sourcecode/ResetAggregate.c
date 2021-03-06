@@ -151,6 +151,9 @@ void ResetAggregate(LAYER * Soil, LAYER * Veg, AGGREGATED * Total,
 	  Total->Veg.Tile[i].Ra_tile = 0;
 	  Total->Veg.Tile[i].Eact_tile = 0;
 	  Total->Veg.Tile[i].EsSnow_tile = 0;
+	  Total->Veg.Tile[i].USnow_tile = 0;
+	  Total->Veg.Tile[i].Ra_tile_b4corr = 0;
+	  Total->Veg.Tile[i].windFromForce = 0;
 	}
 	  Total->Veg.Tile[SouthFacing].LongIn[1] = 0;
 	  Total->Veg.Tile[SouthFacing].LongOut[1] = 0;

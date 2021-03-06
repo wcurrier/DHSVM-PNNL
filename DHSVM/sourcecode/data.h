@@ -565,6 +565,9 @@ typedef struct
   float Ra_tile;                /* aerodynamic resistance after stability correction s/m-1*/
   float Eact_tile;              /* Actual vapor pressure of air (Pa) */
   float EsSnow_tile;            /* saturated vapor pressure in the snow pack */
+  float USnow_tile;             /* Scalar2scale wind speeds from reference height to 2 m */
+  float Ra_tile_b4corr;         /* aerodynamic resistance based on reference height and vegetation b4 stability correction */
+  float windFromForce;			/* wind from LocalMet->Wind*/
 } TileStruct;
 
 typedef struct {
