@@ -218,9 +218,11 @@ void NoOverStorySnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
     and forested values */
 
     tmp = VType->USnow*LocalMet->Wind; //forested snow wind
+//    SnowWind = tmp;
 	SnowWind = tmp + (SnowWind- tmp)*GAPWIND_FACTOR_Tile;
 
 	tmp = VType->RaSnow/LocalMet->Wind;
+//	SnowRa = tmp;
     SnowRa = tmp - (tmp-SnowRa)*GAPWIND_FACTOR_Tile;
 
 //	printf("Exposed Facing SnowWind Before Correction After GapWind: %f \n", SnowWind);
@@ -337,9 +339,11 @@ void NoOverStorySnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
     and forested values */
 
     tmp = VType->USnow*LocalMet->Wind; //forested snow wind
+//    SnowWind = tmp;
     SnowWind = tmp + (SnowWind- tmp)*GAPWIND_FACTOR_Tile;
 
     tmp = VType->RaSnow/LocalMet->Wind;
+//    SnowRa = tmp;
     SnowRa = tmp - (tmp-SnowRa)*GAPWIND_FACTOR_Tile;
 
 //	printf("Exposed Facing SnowWind Before Correction After GapWind: %f \n", SnowWind);
@@ -455,9 +459,11 @@ void NoOverStorySnowMelt(OPTIONSTRUCT *Options, int y, int x, int Dt,
     and forested values */
 
     tmp = VType->USnow*LocalMet->Wind; //forested snow wind
+//    SnowWind = tmp;
     SnowWind = tmp + (SnowWind- tmp)*GAPWIND_FACTOR_Tile;
 
     tmp = VType->RaSnow/LocalMet->Wind;
+//    SnowRa = tmp;
     SnowRa = tmp - (tmp-SnowRa)*GAPWIND_FACTOR_Tile;
 
 //	printf("Exposed Facing SnowWind Before Correction After GapWind: %f \n", SnowWind);
