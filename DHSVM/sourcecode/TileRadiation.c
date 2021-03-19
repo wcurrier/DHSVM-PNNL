@@ -203,8 +203,8 @@ void TileShortRadiation(VEGTABLE *VType, TileStruct *Tile, OPTIONSTRUCT *Options
       if (TaubNF > 1) {
 		TaubNF=1;
 	  }
-      printf("TauMult = %f \n", TauMult);
-      printf("TaubNF = %f \n", TaubNF);
+      /*printf("TauMult = %f \n", TauMult);
+      printf("TaubNF = %f \n", TaubNF);*/
 	  Tile->NetShort[1] = (1-Albedo[1])*(Rs*(1-F) + F*(Rsb*TaubNF + Rsd*TaudNF)); /* Understory = 1 */
     }
     else {
