@@ -282,6 +282,7 @@ int InitVegTable(VEGTABLE **VType, LISTPTR Input, OPTIONSTRUCT *Options, LAYER *
     "DIFFUSE RADIATION ATTENUATION",
     "DIFFUSE RADIATION ATTENUATION NF",
     "DIFFUSE RADIATION ATTENUATION SF",
+    "NF Edge Radiation Multiplier",
     "CLUMPING FACTOR",
     "LEAF ANGLE A",
     "LEAF ANGLE B",
@@ -504,6 +505,7 @@ int InitVegTable(VEGTABLE **VType, LISTPTR Input, OPTIONSTRUCT *Options, LAYER *
         (*VType)[i].Taud = NOT_APPLICABLE;
         (*VType)[i].TaudNF = NOT_APPLICABLE;
         (*VType)[i].TaudSF = NOT_APPLICABLE;
+        (*VType)[i].TauMult = NOT_APPLICABLE;
       }
       else if (Options->ImprovRadiation == TRUE) {
         if (!CopyFloat(&((*VType)[i].Taud), VarStr[diff_attn], 1))
@@ -512,6 +514,8 @@ int InitVegTable(VEGTABLE **VType, LISTPTR Input, OPTIONSTRUCT *Options, LAYER *
           ReportError(KeyName[diff_attnNF], 51);
         if (!CopyFloat(&((*VType)[i].TaudSF), VarStr[diff_attnSF], 1))
           ReportError(KeyName[diff_attnSF], 51);
+        if (!CopyFloat(&((*VType)[i].TauMult), VarStr[dir_attnNF], 1))
+          ReportError(KeyName[dir_attnNF], 51);
         (*VType)[i].Atten = NOT_APPLICABLE;
         (*VType)[i].ClumpingFactor = NOT_APPLICABLE;
         (*VType)[i].Scat = NOT_APPLICABLE;

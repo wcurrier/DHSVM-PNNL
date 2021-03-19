@@ -623,6 +623,7 @@ typedef struct {
                            to the north-facing fraction of the canopy - Tile Only */
   float TaudSF;			/* Transmission of Diffuse radiation through the canopy and
                            to the south-facing fraction of the canopy - Tile Only */
+  float TauMult;        /* North-facing edge direct beam radiation multiplier [-]*/
   float LeafAngleA;		/* parameter describing the Leaf Angle Distribution */
   float LeafAngleB;		/* parameter describing the leaf Angle Distribution */
   float Scat;			/* scattering parameter (between 0.7 and 0.85) */
